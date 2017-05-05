@@ -1,0 +1,93 @@
+{% extends 'aircraft/layout.html' %}
+
+{% block content %}
+<div class="profile-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light">
+                <div class="portlet-body">
+                    <div class="tab-content">
+                        <!-- PRIVACY SETTINGS TAB -->
+                            <div class="portlet box red">
+                                <div class="portlet-title">
+                                    <div class="caption">
+                                        <i class="fa fa-cogs"></i>飞行日志
+                                    </div>
+                                    <div class="actions">
+                                        {% if admin_view.can_create %}
+                                          {{ lib.add_modal_button(url=get_url('.create_view', id=id, url=return_url, modal=True), content='<i class="fa fa-plus"></i>创建', btn_class='btn btn-default btn-sm') }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <!-- 参考table_advanced.html -->
+                                <div class="portlet-body">
+                                    <div class="table-scrollable">
+                                        <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>编号</th> 
+                                                <th>起飞时间</th>
+                                                <th>降落时间</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>{{ model.id }}</td>
+                                                <td>{{ model.departureTime }}</td>
+                                                <td>{{ model.landingTime }}</td>
+                                                <td>
+                                                    {% block list_row_actions scoped %}
+                                                    <div class="btn-group btn-group-xs btn-group-solid">
+                                                      {% for action in list_row_actions %}
+                                                        {{ action.render_ctx(get_pk_value(row), row) }}
+                                                      {% endfor %}
+                                                    </div>
+                                                    {% endblock %}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        <!-- END PRIVACY SETTINGS TAB -->
+                    </div>
+                    {# 增加模态框, 没有使用flask-admin的lib实现 #}
+                    <div class="modal fade" id="fa_modal_window" tabindex="-1" role="dialog" aria-labelledby="fa_modal_label">
+                      <div class="modal-dialog modal-lg" role="document">
+                      {# bootstrap version > 3.1.0 required for this to work #}
+                        <div class="modal-content">
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block tail %}
+<script>
+    $(function(){
+        //菜单高亮
+        $('.profile-usermenu a').each(function(){
+            var href = $(this).attr('href')
+            var sub_action = href.split('sub=')[1];
+            sub_action = sub_action.split('&')[0]
+            if(href.indexOf('flightlog') >= 0){
+                $(this).parent().addClass('active')
+            }else{
+                $(this).parent().removeClass('active')
+            }
+        })
+       $(document).on('click','.btn-sm',function(){
+                alert()
+            setTimeout(3000, function(){
+                 $('.navbar-fixed-top').hide()
+            })
+       })
+    })
+</script>
+{% endblock %}

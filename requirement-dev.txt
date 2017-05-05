@@ -1,0 +1,4 @@
+pytest
+Flask-Testing
+autoflake
+ipython

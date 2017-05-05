@@ -1,0 +1,387 @@
+{% import 'admin/lib.html' as lib with context %}
+{% import 'admin/layout.html' as layout with context %}
+{% import './operations.html' as custom_op with context %}
+
+{% macro render_custom_form_buttons(cancel_url, extra=None, is_modal=False) %}
+<div class="row">
+  <div class="col-md-offset-3 col-md-9">
+    <input type="submit" class="btn btn-circle blue" value="{{ _gettext('Save') }}" />
+    {% if extra %}
+    {{ extra }}
+    {% endif %}
+
+    {% if cancel_url %}
+    <a href="{{ cancel_url }}" class="btn btn-circle default" role="button" {% if is_modal %}data-dismiss="modal"{% endif %}>{{ _gettext('Cancel') }}</a>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro render_custom_form(form, cancel_url, extra=None, form_opts=None, action=None, is_modal=False) %}
+<form action="{{ action or '' }}" method="POST" role="form" class="admin-form form-horizontal form-bordered form-row-stripped" enctype="multipart/form-data">
+  <div class="form-body">
+    {{ lib.render_form_fields(form, form_opts=form_opts) }}
+  </div>
+  <div class="form-actions">
+    {{ render_custom_form_buttons(cancel_url, extra, is_modal) }}
+  </div>
+</form>
+{% endmacro %}
+
+{% macro filter_form() %}
+<form id="filter_form" method="GET" action="{{ return_url }}">
+  <div class="pull-right">
+    <button type="submit" class="btn green" style="display: none">
+      <i class="fa fa-check"></i>
+      {{ _gettext('Apply') }}
+    </button>
+    {% if active_filters %}
+    <a href="{{ clear_search_url }}" class="btn btn-default">
+      <i class="fa fa-mail-reply"></i>
+      {{ _gettext('Reset Filters') }}
+    </a>
+    {% endif %}
+  </div>
+
+  <table class="filters"></table>
+</form>
+<div class="clearfix"></div>
+{% endmacro %}
+
+{% macro stat_dashboard(stat) %}
+{% if stat.color %}
+  {% set color = stat.color %}
+{% else %}
+  {% set color = 'green-sharp' %}
+{% endif %}
+<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+  <div class="dashboard-stat2">
+    <div class="display">
+      <div class="number">
+        <h3 class="font-{{color}}">{{ stat.count }}<small class="font-{{color}}">{{ stat.unit }}</small></h3>
+        <small>{{ stat.name }}</small>
+      </div>
+      <div class="icon">
+        <i class="{{ stat.icon }}"></i>
+      </div>
+    </div>
+    <div class="progress-info">
+      <div class="progress">
+        <span style="width: {{ stat.changed }}%;" class="progress-bar progress-bar-success {{stat.color}}">
+                    <span class="sr-only">{{ stat.changed }}% {% if stat.decreased %}减少{% else %}新增{% endif %}</span>
+        </span>
+      </div>
+      <div class="status">
+        <div class="status-title">
+          比上周{% if stat.decreased %}减少{% else %}新增{% endif %} {{ stat.changed }}
+        </div>
+        <div class="status-number">
+          {{ stat.percentage }}%
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro custom_menu(menu_root=None) %}
+  {% if menu_root is none %}{% set menu_root = admin_view.admin.menu() %}{% endif %}
+  {%- for item in menu_root %}
+    {%- if item.is_category() -%}
+      {% set children = item.get_children() %}
+      {%- if children %}
+        {% set class_name = item.get_class_name() %}
+        {%- if item.is_active(admin_view) %}
+        <li class="open">
+        {% else -%}
+        <li class="">
+        {%- endif %}
+          <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
+            {{ layout.menu_icon(item) }}
+            <span class="title">{{ item.name }}</span>
+            {% if item.is_active(admin_view) %}<span class="arrow open"></span>{% else %}<span class="arrow"></span>{% endif %}
+          </a>
+          <ul class="sub-menu" {% if item.is_active(admin_view) %}style="display: block;"{% endif %}>
+          {%- for child in children -%}
+            {% set class_name = child.get_class_name() %}
+            {%- if child.is_active(admin_view) %}
+            <li class="active{% if class_name %} {{class_name}}{% endif %}">
+            {% else %}
+            <li{% if class_name %} class="{{class_name}}"{% endif %}>
+            {%- endif %}
+              <a href="{{ child.get_url() }}"{% if child.target %} target="{{ child.target }}"{% endif %}>{{ layout.menu_icon(child) }}{{ child.name }}</a>
+            </li>
+          {%- endfor %}
+          </ul>
+        </li>
+      {% endif %}
+    {%- else %}
+      {%- if item.is_accessible() and item.is_visible() -%}
+        {% set class_name = item.get_class_name() %}
+        {%- if item.is_active(admin_view) %}
+        <li class="active{% if class_name %} {{class_name}}{% endif %}">
+        {%- else %}
+        <li{% if class_name %} class="{{class_name}}"{% endif %}>
+        {%- endif %}
+          <a href="{{ item.get_url() }}"{% if item.target %} target="{{ item.target }}"{% endif %}>{{ layout.menu_icon(item) }}
+            <span class="title">{{ item.name }}</span>
+          </a>
+        </li>
+      {%- endif -%}
+    {% endif -%}
+  {% endfor %}
+{% endmacro %}
+
+{% macro popup_form() %}
+<div id='popup'>
+  <!-- 模态框（Modal） -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <form action="" method="post" id='popForm'>
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="background-image: none !important">
+              &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel"></h4>
+          </div>
+          <div class="modal-body" id="myModalText" style="display: none"></div>
+          <div class="modal-body" id="annotation" style="display: none">
+            <label for="" class="col-md-2" style="margin-top: 6px !important;">审核意见</label>
+            <div class="form-group">
+              <div class="col-md-10">
+                  <input type="text" class="form-control">
+              </div>
+            </div>
+            <div style="clear:both"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="btn-primary">
+              确认
+            </button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消
+            </button>
+          </div>
+        </div><!-- /.modal-content -->
+      </form>
+    </div><!-- /.modal -->
+  </div>
+</div>
+{% endmacro %}
+
+{% macro top_menu() %}
+  <!-- BEGIN NOTIFICATION DROPDOWN -->
+  <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
+   <li class="dropdown dropdown-extended dropdown-notification dropdown-dark" id="header_notification_bar">
+    <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+    <i class="icon-bell"></i>
+    <span class="badge badge-success">
+    {{ notifies|length }} </span>
+    </a>
+    <ul class="dropdown-menu">
+      <li class="external">
+        <h3><span class="bold">12 pending</span> notifications</h3>
+        <a href="/admin/notice">view all</a>
+      </li>
+      <li>
+        <div class="slimScrollDiv"><ul class="dropdown-menu-list scroller" data-handle-color="#637283" data-initialized="1">
+        {% for x in notifies %}
+          <li>
+            <a href="/admin/notice">
+            <span class="time">
+            {{ x.pubTime|uniform_datetime_to_day }}
+            </span>
+            <span class="details">
+            <span class="label label-sm label-icon label-success">
+            <i class="fa fa-plus"></i>
+            </span>
+            {{ x.title }} </span>
+            </a>
+          </li>
+         {% endfor %}
+        </ul><div class="slimScrollBar" style="background: rgb(99, 114, 131); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 121.359px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(234, 234, 234); opacity: 0.2; z-index: 90; right: 1px;"></div></div>
+      </li>
+    </ul>
+  </li>
+{% endmacro %}
+
+{% macro render_table(view, list_columns, data, get_value, list_row_actions, get_pk_value, row_actions, num_pages, page, page_size, pager_url, get_url) %}
+<div class="table-scrollable table-responsive">
+    <table class="table table-striped table-bordered table-hover" id="table" aria-describedby="tabl-info">
+      <!-- 表头 -->
+      <thead>
+        <tr role="row">
+          {% block list_header scoped %}
+
+          <!-- 如果支持选择，在这里显示一个全选框 -->
+          <!-- {% if actions %}
+               <th class="list-checkbox-column table-checkbox sorting_disabled" rowspan="1" colspan="1">
+               <input type="checkbox" name="rowtoggle" class="action-rowtoggle group-checkable" title="{{ _gettext('Select All Records') }}" />
+               </th>
+               {% endif %} -->
+
+          <!-- 如果支持操作，在这里显示一个空头 -->
+          {% block list_row_actions_header %}
+          {% if view.column_display_actions %}
+          <th style="min-width: 90px; max-width: 120px;">&nbsp;</th>
+          {% endif %}
+          {% endblock %}
+
+          {% set column = 0 %}
+          {% for c, name in list_columns %}
+          <th {% if view.is_sortable(c) %}class="sorting"{% endif %}>
+            {{ name }}
+          </th>
+          {% set column = column + 1 %}
+          {% endfor %}
+          {% endblock %}
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for row in data %}
+        <tr>
+          {% block list_row scoped %}
+
+          <!-- {% if actions %}
+               <td>
+               <input type="checkbox" name="rowid" class="action-checkbox" value="{{ get_pk_value(row) }}" title="{{ _gettext('Select Record') }}" />
+               </td>
+               {% endif %} -->
+
+            {% block list_row_actions_column scoped %}
+              {% if view.column_display_actions %}
+                <td>
+                  {% block list_row_actions scoped %}
+                  <div class="btn-group btn-group-xs btn-group-solid">
+                    {% for action in list_row_actions %}
+                      {{ action.render_ctx(get_pk_value(row), row) }}
+                    {% endfor %}
+                  </div>
+                  {% endblock %}
+                </td>
+              {%- endif -%}
+            {% endblock %}
+
+            {% for c, name in list_columns %}
+            <td class="col-{{c}}">
+              {% if view.is_editable(c) %}
+              {% set form = list_forms[get_pk_value(row)] %}
+              {% if form.csrf_token %}
+              {{ form[c](pk=get_pk_value(row), display_value=get_value(row, c), csrf=form.csrf_token._value()) }}
+              {% else %}
+              {{ form[c](pk=get_pk_value(row), display_value=get_value(row, c)) }}
+              {% endif %}
+              {% else %}
+              {{ get_value(row, c) }}
+              {% endif %}
+            </td>
+            {% endfor %}
+
+          {% endblock %}
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="999">
+            <div class="text-center">
+            </div>
+              {{ view.get_empty_list_message() }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+
+    <div class="row">
+      <div class="col-md-5 col-sm-12"></div>
+      <div class="col-md-7 col-sm-12">
+        <div class="dataTables_paginate paging_simple_numbers">
+        {% if num_pages is not none %}
+          {{ pager(page, num_pages, pager_url) }}
+        {% else %}
+          {{ lib.simple_pager(page, data|length==page_size, pager_url) }}
+        {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% if view.support_popup %}
+    {{ popup_form() }}
+    {% endif %}
+{% endmacro %}
+
+
+{# ---------------------- Pager -------------------------- #}
+{% macro pager(page, pages, generator) -%}
+{% if pages > 1 %}
+<ul class="pagination">
+    {% set min = page - 3 %}
+    {% set max = page + 3 + 1 %}
+
+    {% if min < 0 %}
+        {% set max = max - min %}
+    {% endif %}
+    {% if max >= pages %}
+        {% set min = min - max + pages %}
+    {% endif %}
+
+    {% if min < 0 %}
+        {% set min = 0 %}
+    {% endif %}
+    {% if max >= pages %}
+        {% set max = pages %}
+    {% endif %}
+
+    {% if min > 0 %}
+    <li>
+        <a class="sub_url" href="{{ generator(0) }}">&laquo;</a>
+    </li>
+    {% else %}
+    <li class="disabled">
+        <a href="javascript:void(0)">&laquo;</a>
+    </li>
+    {% endif %}
+    {% if page > 0 %}
+    <li>
+        <a class="sub_url" href="{{ generator(page-1) }}">&lt;</a>
+    </li>
+    {% else %}
+    <li class="disabled">
+        <a href="javascript:void(0)">&lt;</a>
+    </li>
+    {% endif %}
+
+    {% for p in range(min, max) %}
+    {% if page == p %}
+    <li class="active">
+        <a href="javascript:void(0)">{{ p + 1 }}</a>
+    </li>
+    {% else %}
+    <li>
+        <a class="sub_url" href="{{ generator(p) }}">{{ p + 1 }}</a>
+    </li>
+    {% endif %}
+    {% endfor %}
+
+    {% if page + 1 < pages %}
+    <li>
+        <a class="sub_url" href="{{ generator(page + 1) }}">&gt;</a>
+    </li>
+    {% else %}
+    <li class="disabled">
+        <a href="javascript:void(0)">&gt;</a>
+    </li>
+    {% endif %}
+    {% if max < pages %}
+    <li>
+        <a class="sub_url" href="{{ generator(pages - 1) }}">&raquo;</a>
+    </li>
+    {% else %}
+    <li class="disabled">
+        <a href="javascript:void(0)">&raquo;</a>
+    </li>
+    {% endif %}
+</ul>
+{% endif %}
+{%- endmacro %}

@@ -1,0 +1,212 @@
+{% extends 'layout.html' %}
+{% block body %}
+<!-- BEGIN INLINE NOTIFICATIONS PORTLET-->
+<div class="col-md-6">
+    <!-- BEGIN POPOVERS PORTLET-->
+    <div class="portlet box blue">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-volume-up"></i>通知公告
+            </div>
+            <div class="tools">
+                <a href="javascript:;" class="remove">
+                </a>
+            </div>
+        </div>
+        <div class="portlet-body">
+            <ul class="list-group">
+            {% for x in notifies  %}
+                {% if loop.index <= 5%}
+                    <li>
+                        <a href="/admin/notice" class="list-group-item list-group-item-info">
+                            <span class="label list-group-item-info">{{ x.id }}</span>
+                            <span class="label list-group-item-info">{{ x.title }}</span>
+                            <span class="badge badge-warning">
+                                {{ x.pubTime|uniform_datetime_to_day }}
+                            </span>
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            </ul>
+            
+        </div>
+    </div>
+    <!-- BEGIN POPOVERS PORTLET-->
+    <div class="portlet box green">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-warning"></i>生产预警
+            </div>
+        </div>
+        <div class="portlet-body">
+            <div class="clearfix">
+                <div class="panel panel-success">
+                    <!-- Default panel contents -->
+                    <!-- Table -->
+                    <table class="table">
+                    <thead>
+                    <tr>
+                        <th>
+                            飞机号
+                        </th>
+                        <th>
+                            编号
+                        </th>
+                        <th>
+                            内容描述
+                        </th>
+                        <th>
+                            预计检查日期
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                             1
+                        </td>
+                        <td>
+                             Mark
+                        </td>
+                        <td>
+                             Otto
+                        </td>
+                        <td>
+                             @mdo
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                             2
+                        </td>
+                        <td>
+                             Jacob
+                        </td>
+                        <td>
+                             Thornton
+                        </td>
+                        <td>
+                             @fat
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                             3
+                        </td>
+                        <td>
+                             Larry
+                        </td>
+                        <td>
+                             the Bird
+                        </td>
+                        <td>
+                             @twitter
+                        </td>
+                    </tr> 
+                    <tr>
+                        <td>
+                             3
+                        </td>
+                        <td>
+                             Larry
+                        </td>
+                        <td>
+                             the Bird
+                        </td>
+                        <td>
+                             @twitter
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                             3
+                        </td>
+                        <td>
+                             Larry
+                        </td>
+                        <td>
+                             the Bird
+                        </td>
+                        <td>
+                             @twitter
+                        </td>
+                    </tr>
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+</div>
+
+<div class="col-md-6">
+    <!-- BEGIN POPOVERS PORTLET-->
+    <div class="portlet box blue">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-list"></i>代办事项
+            </div>
+            <div class="tools">
+                <a href="javascript:;" class="remove">
+                </a>
+            </div>
+        </div>
+        <div class="portlet-body">
+            <ul class="list-group">
+                <li class="list-group-item">
+                     Cras justo odio
+                </li>
+                <li class="list-group-item">
+                     Dapibus ac facilisis in
+                </li>
+                <li class="list-group-item">
+                     Morbi leo risus
+                </li>
+                <li class="list-group-item">
+                     Porta ac consectetur ac
+                </li>
+                <li class="list-group-item">
+                     Vestibulum at eros
+                </li>
+            </ul>
+            
+        </div>
+    </div>
+    <!-- BEGIN POPOVERS PORTLET-->
+    <div class="portlet box blue">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-exclamation-triangle"></i>航材预警
+            </div>
+            <div class="tools">
+                <a href="javascript:;" class="remove">
+                </a>
+            </div>
+        </div>
+        <div class="portlet-body">
+            <ul class="list-group">
+                <li class="list-group-item">
+                     Cras justo odio
+                </li>
+                <li class="list-group-item">
+                     Dapibus ac facilisis in
+                </li>
+                <li class="list-group-item">
+                     Morbi leo risus
+                </li>
+                <li class="list-group-item">
+                     Porta ac consectetur ac
+                </li>
+                <li class="list-group-item">
+                     Vestibulum at eros
+                </li>
+            </ul>
+            
+        </div>
+    </div>
+
+</div>
+{% endblock %}

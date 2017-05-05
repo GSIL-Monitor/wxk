@@ -1,0 +1,145 @@
+{% extends 'admin/model/list.html' %}
+{% import 'admin/model/layout.html' as model_layout with context %}
+{% import 'actions.html' as act with context %}
+{% import './lib.html' as custom_lib with context %}
+
+{% block head %}
+{{super()}}
+<link href="{{ url_for('static', filename='css/magnific-popup.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/bootstrap-switch.min.css') }}" rel="stylesheet">
+<style>
+ div.dataTables_paginate {
+   float: right;
+   margin: 0;
+ }
+
+ .table .btn.btn-group-item {
+   margin-right: 0px;
+ }
+
+ .table .btn-group.btn-group-xs .btn {
+   padding: 1px 5px;
+   font-size: 12px;
+   line-height: 1.5;
+   border-radius: 3px;
+ }
+
+ .table .btn-group.btn-group-xs .btn:last-child:not(:first-child) {
+   border-top-left-radius: 0;
+   border-bottom-left-radius: 0;
+ }
+</style>
+{% endblock %}
+
+{% block body %}
+
+{% if admin_view.box_color %}
+{% set box_color = admin_view.box_color %}
+{% else %}
+{% set box_color = 'green' %}
+{% endif %}
+
+{% if admin_view.menu_icon_value %}
+{% set icon_value = admin_view.menu_icon_value %}
+{% else %}
+{% set icon_value = 'fa-cogs' %}
+{% endif %}
+
+  {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+      {% for category, m in messages %}
+        {% if category %}
+        {# alert-error changed to alert-danger in bootstrap 3, mapping is for backwards compatibility #}
+        {% set mapping = {'message': 'info', 'error': 'danger'} %}
+        <div class="alert alert-{{ mapping.get(category, category) }} alert-dismissable">
+        {% else %}
+        <div class="alert alert-dismissable">
+        {% endif %}
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          {{ m }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+<div class="portlet box {{ box_color }}">
+  {% block model_menu_bar scoped %}
+  <div class="portlet-title">
+    <div class="caption">
+      <i class="fa {{ icon_value }}"></i>
+      {% block model_menu_title %}
+      {{ admin_view.name|capitalize }} {% if count %}[{{count}}]{% endif %}
+      {% endblock %}
+    </div>
+
+    {% block model_menu_actions %}
+    <div class="actions">
+      {% if admin_view.can_create %}
+      <!-- TODO: 弹出模态对话框 -->
+      <a href="{{ get_url('.create_view', url=return_url) }}" class="btn btn-default btn-sm">
+        <i class="fa fa-plus"></i>
+        {{ _gettext('Create') }}
+      </a>
+      {% endif %}
+
+      {% if admin_view.can_export %}
+        {% if admin_view.export_types|length > 0 %}
+        <!-- TODO: 目前只允许第一个导出类型 -->
+        <a href="{{ get_url('.export', export_type=admin_view.export_types[0]) }}" class="btn btn-default btn-sm">
+          <i class="fa fa-print"></i>
+          {{ _gettext('Export') }}
+        </a>
+        {% endif %}
+      {% endif %}
+
+      {% if filters %}
+        {{ act.filter_options() }}
+      {% endif %}
+
+        <!-- {% if actions %}
+             {{ act.tools_dropdown(actions) }}
+             {% endif %} -->
+    </div>
+    {% endblock %}
+  </div>
+
+  {% endblock %}
+
+  {% block model_list_table %}
+  <div class="portlet-body">
+    {% if filters %}
+    <div class="row">
+      <div class="col-md-12">
+      {{ ctx.filter_form() }}
+      </div>
+    </div>
+    {% endif %}
+
+    {{ custom_lib.render_table(admin_view, list_columns, data, get_value, list_row_actions, get_pk_value, row_actions, num_pages, page, page_size, pager_url) }}
+
+  </div>
+  {% endblock %}
+</div>
+
+{% endblock %}
+
+{% block tail %}
+{{ super() }}
+
+<script src="{{ url_for('static', filename='js/jquery.magnific-popup.min.js') }}" type="text/javascript"></script>
+<script>
+ jQuery(document).ready(function() {
+   $('.popup-link').magnificPopup({
+     type: 'image'
+   });
+   var picker = $('.datepicker');
+   if (picker.length) {
+     picker.datepicker({
+       language: 'zh-CN',
+       autoclose: true,
+     });
+   }
+ });
+</script>
+{% endblock %}
+

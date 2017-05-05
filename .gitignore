@@ -1,0 +1,11 @@
+*\.pyc
+\.cache
+/tonghangyun/
+/.python-version
+/docs/api/
+/node_modules/
+/servcies/
+*.sqlite
+__pycache__
+.gitreview
+/venv/

@@ -1,0 +1,103 @@
+{% extends 'layout.html' %}
+{% import 'admin/lib.html' as lib with context %}
+{% import 'admin/model/row_actions.html' as row_actions with context %}
+{% import './lib.html' as custom_lib with context %}
+
+{% block body %}
+<div class="col-md-12">
+    <div class="portlet light">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="icon-book-open font-green-sharp"></i>
+                <span class="caption-subject font-green-sharp bold uppercase">
+                    {{ name }} - 维修方案
+                </span>
+            </div>
+            <div class="tools">
+                <a href="javascript:;" class="collapse">
+                </a>
+                <a href="javascript:;" class="fullscreen">
+                </a>
+            </div>
+        </div>
+        <div class="portlet-body">
+          <div class="row">
+            <div class="col-md-4 profile-userpic">
+              <img src="{{ url_for('static', filename='img/profile_user.jpg') }}" class="img-responsive">
+            </div>
+            <div class="col-md-4">
+              <h4 class="profile-desc-title">制造商</h4>
+              <span class="profile-desc-text">海丰通航科技有限公司</span>
+              <h4 class="profile-desc-title">上线时间</h4>
+              <span class="profile-desc-text">2015-08-21</span>
+            </div>
+            <div class="col-md-4">
+              <h4 class="profile-desc-title">关联状态</h4>
+              <span class="profile-desc-text">已经绑定
+                <span class="profile-desc-link">
+                  <a href="#">8</a>
+                </span> 架飞机
+              </span>
+              <h4 class="profile-desc-title">有效期至</h4>
+              <span class="profile-desc-text">2018-08-21</span>
+            </div>
+          </div>
+          <div class="profile-usertitle"></div>
+          <div class="navbar navbar-default" role="navigation">
+          <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+              {% for k, v in view_list.items() %}
+              <li>
+                <a href="{{ url_for('.index_view', sub=k)}}" class="subl">{{ v['title'] }} </a>
+              </li>
+              {% endfor %}
+            </ul>
+            <form class="navbar-form navbar-left" role="search">
+              <div class="form-group">
+                 <input type="text" class="form-control" placeholder="Search">
+              </div>
+              <button type="submit" class="btn blue">搜索</button>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+              {% if admin_view.can_create %}
+              <li>
+                {{ lib.add_modal_button(url=url_for('.create_view', sub=sub, url=return_url, modal=True), content='<i class="fa fa-plus"></i>创建') }}
+              </li>
+              {% endif %}
+            </ul>
+          </div>
+          </div>
+          {{ custom_lib.render_table(admin_view, list_columns, data, get_value, list_row_actions, get_pk_value, row_actions, num_pages, page, page_size, pager_url) }}
+        </div>
+    </div>
+
+    {# 增加模态框, 没有使用flask-admin的lib实现 #}
+    <div class="modal fade" id="fa_modal_window" tabindex="-1" role="dialog" aria-labelledby="fa_modal_label">
+      <div class="modal-dialog modal-lg" role="document">
+      {# bootstrap version > 3.1.0 required for this to work #}
+        <div class="modal-content">
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block tail %}
+<script src="{{ url_for('static', filename='js/highlight_selected.js') }}" type="text/javascript"></script>
+<script>
+ $(function() {
+   Metronic.init();
+   Layout.init();
+   //重构分页url
+   $(document).on('click','.sub_url',function(){
+       //提取当前选中子视图
+       var sub_action = $('.navbar-ex1-collapse .navbar-nav .active').find('a').attr('href').split('sub=')[1];
+       if($(this).attr('href').indexOf('page') >= 0){
+           $(this).attr('href',$(this).attr('href')+'&sub='+sub_action)
+       }else{
+           $(this).attr('href',$(this).attr('href')+'?sub='+sub_action)
+       }
+   })
+  });
+</script>
+{% endblock %}

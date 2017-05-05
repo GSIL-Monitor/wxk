@@ -1,0 +1,54 @@
+{% extends 'list.html' %}
+
+{% block head %}
+  {{ super() }}
+  {{ lib.form_css() }}
+{% endblock %}
+
+{% block model_menu_title %}
+查看 - {{ admin_view.name|capitalize }}
+{% endblock %}
+
+{% block model_menu_actions %}
+{% endblock %}
+
+
+{% block model_list_table %}
+<div class="portlet-body">
+
+  {% block details_search %}
+  <div class="row">
+    <div class="col-md-6 col-sm-12">
+      <div class="input-group fa_filter_container ">
+        <span class="input-group-addon">{{ _gettext('过滤') }}</span>
+        <input id="fa_filter" type="text" class="form-control">
+      </div>
+    </div>
+  </div>
+  {% endblock %}
+
+  {% block details_table %}
+  <div class="table-scrollable">
+  <table class="table table-hover table-striped table-bordered searchable">
+    {% for c, name in details_columns %}
+      <tr>
+        <td style="min-width: 150px;">
+          <b>{{ name }}</b>
+        </td>
+        <td>
+        {{ get_value(model, c) }}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+  </div>
+  {% endblock %}
+</div>
+{% endblock %}
+
+{% block list_pager %}{% endblock %}
+
+{% block tail %}
+  {{super()}}
+  <script src="{{ admin_static.url(filename='admin/js/details_filter.js', v='1.0.0') }}"></script>
+{% endblock %}

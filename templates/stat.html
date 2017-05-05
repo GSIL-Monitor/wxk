@@ -1,0 +1,99 @@
+{% macro stat_portlet(stat, id=None) %}
+<div class="portlet light">
+  <div class="portlet-title">
+    <div class="caption">
+      {% if stat.icon_value %}<i class="{{ stat.icon_value }}"></i>{% endif %}
+      <span class="caption-subject bold uppercase {% if stat.font_color %}font-{{ stat.font_color }}{% endif %}">{{ stat.title }}</span>
+      <span class="caption-helper">{{ stat.helper }}</span>
+    </div>
+    <div class="tools">
+      <a href="javascript:;" class="fullscreen" data-original-title title>
+      </a>
+    </div>
+  </div>
+  <div class="portlet-body">
+    {% if id %}
+    <div id="{{ id }}" class="chart">
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro init_pie_chart(datas, id, theme='light', title='name', value='value', show_legend=True, legend_position='right') %}
+(function() {
+var chart = AmCharts.makeChart('{{ id }}', {
+'type': 'pie',
+'theme': '{{ theme }}',
+'fontFamily': 'Open Sans',
+'dataProvider': {{ datas|tojson|safe }},
+'valueField': '{{ value }}',
+'titleField': '{{ title }}',
+'outlineAlpha': 0.4,
+'depth3D': 15,
+"balloonText": "[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>",
+'angle': 30,
+labelsEnabled: false,
+autoMargins: true,
+marginTop: 0,
+marginBottom: 0,
+marginLeft: 0,
+marginRight: 0,
+pullOutRadius: 0,
+{% if show_legend %}
+legend: {
+'position': '{{ legend_position }}'
+},
+{% endif %}
+});
+
+$('#{{ id }}').closest('.portlet').find('.fullscreen').click(function() {
+chart.invalidateSize();
+});
+}());
+{% endmacro %}
+
+{% macro init_bar_chart(datas, id, theme='light', title='name', value='value', export=True) %}
+(function() {
+var chart = AmCharts.makeChart("{{ id }}", {
+  "type": "serial",
+  "theme": "{{ theme }}",
+  "dataProvider": {{ datas|tojson|safe }},
+  "valueAxes": [ {
+    "gridColor": "#FFFFFF",
+    "gridAlpha": 0.2,
+    "dashLength": 0
+  } ],
+  "gridAboveGraphs": true,
+  "startDuration": 1,
+  "graphs": [ {
+    "balloonText": "[[category]]: <b>[[value]]</b>",
+    "fillAlphas": 0.8,
+    "lineAlpha": 0.2,
+    "type": "column",
+    "valueField": "{{ value }}"
+  } ],
+  "chartCursor": {
+    "categoryBalloonEnabled": false,
+    "cursorAlpha": 0,
+    "zoomable": false
+  },
+  "categoryField": "{{ title }}",
+  "categoryAxis": {
+    "gridPosition": "start",
+    "gridAlpha": 0,
+    "tickPosition": "start",
+    "tickLength": 20
+  },
+{% if export %}
+  "export": {
+    "enabled": true,
+  },
+{% endif %}
+} );
+
+$('#{{ id }}').closest('.portlet').find('.fullscreen').click(function() {
+chart.invalidateSize();
+});
+}());
+{% endmacro %}

@@ -1,0 +1,33 @@
+{% macro render_field_with_errors(field, icon=None, placeholder=None) %}
+<div class="form-group {% if field.errors %}has-error{% endif %}">
+  {{ field.label(class_='control-label visible-ie8 visible-ie9') }}
+  <div class="input-icon">
+    <i class="{{ icon }}"></i>
+    {{ field(class_='form-control placeholder-no-fix', placeholder=placeholder, **kwargs)|safe }}
+    {% if field.errors %}
+    {% for error in field.errors %}
+    <span class="help-block">{{ error }}</span>
+    {% endfor %}
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro render_field(field) %}
+<p>{{ field(class_='form-control', **kwargs)|safe }}</p>
+{% endmacro %}
+
+{% macro render_remember_field(field) %}
+<label for="remember" class="checkbox">
+  <div class="checker">
+    <span class>
+      <input type="checkbox" name="remember" id="remember" value="1">
+    </span>
+  </div>
+  记住我
+</label>
+{% endmacro %}
+
+{% macro render_checkbox_field(field) -%}
+{{ field(type='checkbox', **kwargs) }} {{ field.label(class_='checker') }}
+{%- endmacro %}

@@ -1,0 +1,329 @@
+{% import 'admin/layout.html' as layout with context -%}
+{% import 'lib.html' as ctx with context %}
+{% extends 'admin/base.html' %}
+
+{% block head_tail %}
+  {{ super() }}
+  <link href="{{ url_for('static', filename='css/font-awesome.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/simple-line-icons.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/uniform.default.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/components-rounded.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/plugins.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/layout.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/light.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block page_body %}
+<!-- PAGE HEADER -->
+<div class="page-header navbar navbar-fixed-top">
+	<!-- BEGIN HEADER INNER -->
+	<div class="page-header-inner">
+		<!-- BEGIN LOGO -->
+		<div class="page-logo">
+			<a href="index.html">
+			<img src="/static/img/logo-light.png" alt="logo" class="logo-default">
+			</a>
+			<div class="menu-toggler sidebar-toggler">
+				<!-- DOC: Remove the above "hide" to enable the sidebar toggler button on header -->
+			</div>
+		</div>
+		<!-- END LOGO -->
+		<!-- BEGIN RESPONSIVE MENU TOGGLER -->
+		<a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse">
+		</a>
+		<!-- END RESPONSIVE MENU TOGGLER -->
+
+		<!-- BEGIN PAGE TOP -->
+		<div class="page-top">
+			<!-- BEGIN HEADER SEARCH BOX -->
+      {% if search_supported %}
+			<form class="search-form search-form-expanded" action="{{ return_url }}" method="GET" role="search">
+				<div class="input-group">
+					<input type="text" class="form-control input-sm" placeholder="{{ admin_view.name|capitalize }}搜索..." name="search"
+            {% if search %}value="{{search}}"{% else %}value=""{% endif %}
+          >
+					<span class="input-group-btn">
+					<a href="javascript:;" class="btn submit"><i class="icon-magnifier"></i></a>
+					</span>
+				</div>
+			</form>
+      {% endif %}
+			<!-- END HEADER SEARCH BOX -->
+			<!-- BEGIN TOP NAVIGATION MENU -->
+			
+<style>
+  .slimScrollDiv{position: relative; overflow: hidden; width: auto; height: 250px;}
+  .dropdown-menu-list{height: 250px; overflow: hidden; width: auto;}
+  .slimScrollBar{background: rgb(99, 114, 131); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 121.359px;}
+  .slimScrollRail{width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(234, 234, 234); opacity: 0.2; z-index: 90; right: 1px;}
+</style>
+    <div class="top-menu">
+        <ul class="nav navbar-nav pull-right">
+          <li class="separator hide">
+          </li>
+          <!-- BEGIN NOTIFICATION DROPDOWN -->
+          <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
+          {{ ctx.top_menu() }}
+          <!-- END NOTIFICATION DROPDOWN -->
+          <li class="separator hide"></li>
+          <!-- BEGIN INBOX DROPDOWN -->
+          <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
+          <li class="dropdown dropdown-extended dropdown-inbox dropdown-dark" id="header_inbox_bar">
+              <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+              <i class="icon-envelope-open"></i>
+              <span class="badge badge-danger">
+              4 </span>
+              </a>
+              <ul class="dropdown-menu">
+                <li class="external">
+                  <h3>You have <span class="bold">7 New</span> Messages</h3>
+                  <a href="inbox.html">view all</a>
+                </li>
+                <li>
+                  <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 275px;"><ul class="dropdown-menu-list scroller" style="height: 275px; overflow: hidden; width: auto;" data-handle-color="#637283" data-initialized="1">
+                    <li>
+                      <a href="inbox.html?a=view">
+                      <span class="photo">
+                      <img src="/static/img/avatar2.jpg" class="img-circle" alt="">
+                      </span>
+                      <span class="subject">
+                      <span class="from">
+                      Lisa Wong </span>
+                      <span class="time">Just Now </span>
+                      </span>
+                      <span class="message">
+                      Vivamus sed auctor nibh congue nibh. auctor nibh auctor nibh... </span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="inbox.html?a=view">
+                      <span class="photo">
+                      <img src="/static/img/avatar3.jpg" class="img-circle" alt="">
+                      </span>
+                      <span class="subject">
+                      <span class="from">
+                      Richard Doe </span>
+                      <span class="time">16 mins </span>
+                      </span>
+                      <span class="message">
+                      Vivamus sed congue nibh auctor nibh congue nibh. auctor nibh auctor nibh... </span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="inbox.html?a=view">
+                      <span class="photo">
+                      <img src="/static/img/avatar1.jpg" class="img-circle" alt="">
+                      </span>
+                      <span class="subject">
+                      <span class="from">
+                      Bob Nilson </span>
+                      <span class="time">2 hrs </span>
+                      </span>
+                      <span class="message">
+                      Vivamus sed nibh auctor nibh congue nibh. auctor nibh auctor nibh... </span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="inbox.html?a=view">
+                      <span class="photo">
+                      <img src="/static/img/avatar2.jpg" class="img-circle" alt="">
+                      </span>
+                      <span class="subject">
+                      <span class="from">
+                      Lisa Wong </span>
+                      <span class="time">40 mins </span>
+                      </span>
+                      <span class="message">
+                      Vivamus sed auctor 40% nibh congue nibh... </span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="inbox.html?a=view">
+                      <span class="photo">
+                      <img src="/static/img/avatar3.jpg" class="img-circle" alt="">
+                      </span>
+                      <span class="subject">
+                      <span class="from">
+                      Richard Doe </span>
+                      <span class="time">46 mins </span>
+                      </span>
+                      <span class="message">
+                      Vivamus sed congue nibh auctor nibh congue nibh. auctor nibh auctor nibh... </span>
+                      </a>
+                    </li>
+                  </ul><div class="slimScrollBar" style="background: rgb(99, 114, 131); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 166.209px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(234, 234, 234); opacity: 0.2; z-index: 90; right: 1px;"></div></div>
+                </li>
+              </ul>
+            </li>
+            <!-- END INBOX DROPDOWN -->
+            <li class="separator hide">
+            </li>
+            <!-- BEGIN TODO DROPDOWN -->
+            <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
+            <li class="dropdown dropdown-extended dropdown-tasks dropdown-dark" id="header_task_bar">
+              <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+              <i class="icon-calendar"></i>
+              <span class="badge badge-primary">
+              3 </span>
+              </a>
+              <ul class="dropdown-menu extended tasks">
+                <li class="external">
+                  <h3>You have <span class="bold">12 pending</span> tasks</h3>
+                  <a href="page_todo.html">view all</a>
+                </li>
+                <li>
+                  <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 275px;"><ul class="dropdown-menu-list scroller" style="height: 275px; overflow: hidden; width: auto;" data-handle-color="#637283" data-initialized="1">
+                    <li>
+                      <a href="javascript:;">
+                      <span class="task">
+                      <span class="desc">New release v1.2 </span>
+                      <span class="percent">30%</span>
+                      </span>
+                      <span class="progress">
+                      <span style="width: 40%;" class="progress-bar progress-bar-success" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"><span class="sr-only">40% Complete</span></span>
+                      </span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="javascript:;">
+                      <span class="task">
+                      <span class="desc">Application deployment</span>
+                      <span class="percent">65%</span>
+                      </span>
+                      <span class="progress">
+                      <span style="width: 65%;" class="progress-bar progress-bar-danger" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"><span class="sr-only">65% Complete</span></span>
+                      </span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="javascript:;">
+                      <span class="task">
+                      <span class="desc">Mobile app release</span>
+                      <span class="percent">98%</span>
+                      </span>
+                      <span class="progress">
+                      <span style="width: 98%;" class="progress-bar progress-bar-success" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100"><span class="sr-only">98% Complete</span></span>
+                      </span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="javascript:;">
+                      <span class="task">
+                      <span class="desc">Database migration</span>
+                      <span class="percent">10%</span>
+                      </span>
+                      <span class="progress">
+                      <span style="width: 10%;" class="progress-bar progress-bar-warning" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"><span class="sr-only">10% Complete</span></span>
+                      </span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="javascript:;">
+                      <span class="task">
+                      <span class="desc">Web server upgrade</span>
+                      <span class="percent">58%</span>
+                      </span>
+                      <span class="progress">
+                      <span style="width: 58%;" class="progress-bar progress-bar-info" aria-valuenow="58" aria-valuemin="0" aria-valuemax="100"><span class="sr-only">58% Complete</span></span>
+                      </span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="javascript:;">
+                      <span class="task">
+                      <span class="desc">Mobile development</span>
+                      <span class="percent">85%</span>
+                      </span>
+                      <span class="progress">
+                      <span style="width: 85%;" class="progress-bar progress-bar-success" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"><span class="sr-only">85% Complete</span></span>
+                      </span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="javascript:;">
+                      <span class="task">
+                      <span class="desc">New UI release</span>
+                      <span class="percent">38%</span>
+                      </span>
+                      <span class="progress progress-striped">
+                      <span style="width: 38%;" class="progress-bar progress-bar-important" aria-valuenow="18" aria-valuemin="0" aria-valuemax="100"><span class="sr-only">38% Complete</span></span>
+                      </span>
+                      </a>
+                    </li>
+                  </ul><div class="slimScrollBar" style="background: rgb(99, 114, 131); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 147.994px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(234, 234, 234); opacity: 0.2; z-index: 90; right: 1px;"></div></div>
+                </li>
+              </ul>
+            </li>
+          <!-- END TODO DROPDOWN -->
+          <!-- BEGIN USER LOGIN DROPDOWN -->
+          <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
+          <li class="dropdown dropdown-user dropdown-dark">
+            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+            <span class="username username-hide-on-mobile">
+              {{ current_user|format_username }}
+            </span>
+            <!-- DOC: Do not remove below empty space(&nbsp;) as its purposely used -->
+            <img alt="" class="img-circle" {% if current_user.avatar %}src="{{ current_user.avatar }}"{% else %}src="/static/img/default_avatar.jpg"{% endif %}>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-default">
+              <li>
+                <a href="#">
+                <i class="icon-user"></i> {{ _gettext('My Profile') }} </a>
+              </li>
+              <li class="divider">
+              </li>
+              <li>
+                <a href="{{ url_for('security.logout') }}">
+                <i class="icon-key"></i> {{ _gettext('Log out') }} </a>
+              </li>
+            </ul>
+          </li>
+          <!-- END USER LOGIN DROPDOWN -->
+        </ul>
+      </div>
+			<!-- END TOP NAVIGATION MENU -->
+		</div>
+		<!-- END PAGE TOP -->
+	</div>
+	<!-- END HEADER INNER -->
+</div>
+<!-- END HEADER -->
+<div class="clearfix">
+</div>
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+  <!-- BEGIN SIDEBAR -->
+  <div class="page-sidebar-wrapper">
+    <div class="page-sidebar navbar-collapse collapse">
+      <ul class="page-sidebar-menu" data-keep-expaned="false" data-auto-scroll="true" data-slide-speed="200">
+        {{ ctx.custom_menu() }}
+      </ul>
+    </div>
+  </div>
+  <!-- END SIDEBAR -->
+  <!-- BEGIN CONTENT -->
+  <div class="page-content-wrapper">
+    <div class="page-content">
+      <div class="row">
+        <div class="col-md-12">
+        {% block body %}{% endblock %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END CONTENT -->
+</div>
+<!-- END CONTAINER -->
+{% endblock %}
+
+{% block tail %}
+<script src="{{ url_for('static', filename='js/metronic.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='js/layout.js') }}" type="text/javascript"></script>
+<script>
+jQuery(document).ready(function() {
+    Metronic.init();
+    Layout.init();
+});
+</script>
+{% endblock %}

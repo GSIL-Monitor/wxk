@@ -1,0 +1,143 @@
+{% extends 'aircraft/layout.html' %}
+
+{% block content %}
+<div class="profile-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="portlet grey-cascade box">
+                            <div class="portlet-title">
+                                <div class="caption">
+                                    <i class="fa fa-cogs"></i>
+                                    基本信息
+                                </div>
+                                <div class="actions">
+                                    {{ lib.add_modal_button(url=get_url('.edit_view', id=id, url=return_url, modal=True), content='<i class="fa fa-pencil"></i> Edit', btn_class='btn btn-default btn-sm') }}
+                                </div>
+                            </div>
+                            <div class="portlet-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-bordered table-striped basic_infomation profile-desc-text">
+                                    <thead>
+                                    <tr>
+                                        <td class="profile-desc-title">
+                                             型号:
+                                        </td>
+                                       <td>
+                                            {{ model.planeType }}
+                                        </td>
+                                        <td class="profile-desc-title">
+                                             注册号:
+                                        </td>
+                                       <td>
+                                            {{ model.id }}
+                                        </td>
+                                         <td class="profile-desc-title">
+                                             串号:
+                                        </td>
+                                        <td>
+                                            {{ model.sn }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="profile-desc-title">
+                                            适航证编号:
+                                        </td>
+                                        <td>
+                                            {{ model.acn }}
+                                        </td>
+                                        <td class="profile-desc-title">
+                                             电台执照号:
+                                        </td>
+                                        <td>
+                                            {{ model.sln }}
+                                        </td>
+                                         <td class="profile-desc-title">
+                                             国籍登记证编号:
+                                        </td>
+                                        <td>
+                                            {{ model.nrn }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="profile-desc-title">
+                                             发动机序号:
+                                        </td>
+                                        <td>
+                                            {{ model.engineNumber }}
+                                        </td>
+                                        <td class="profile-desc-title">
+                                             制造商:
+                                        </td>
+                                        <td>
+                                            {{ model.manufacture }}
+                                        </td>
+                                         <td class="profile-desc-title">
+                                             制造日期:
+                                        </td>
+                                        <td>
+                                            {{ model.manufactureDate }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="profile-desc-title">
+                                             引进日期:
+                                        </td>
+                                        <td>
+                                             {{ model.importedDate }}
+                                        </td>
+                                        <td class="profile-desc-title">
+                                             初始飞行时间:
+                                        </td>
+                                        <td>
+                                            {{ model.flightTime }}
+                                        </td>
+                                         <td class="profile-desc-title">
+                                             初始起落次数:
+                                        </td>
+                                        <td>
+                                            {{ model.landTimes }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="profile-desc-title">
+                                             常驻机场:
+                                        </td>
+                                        <td>
+                                            {{ model.permanentAirport }}
+                                        </td>
+                                        <td class="profile-desc-title">
+                                             备注:
+                                        </td>
+                                        <td>
+                                            {{ model.remark }}
+                                        </td>
+                                         <td>
+                                             
+                                        </td>
+                                        <td>
+                                            
+                                        </td>
+                                    </tr>
+                                    </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        {# 增加模态框, 没有使用flask-admin的lib实现 #}
+                        <div class="modal fade" id="fa_modal_window" tabindex="-1" role="dialog" aria-labelledby="fa_modal_label">
+                          <div class="modal-dialog modal-lg" role="document">
+                          {# bootstrap version > 3.1.0 required for this to work #}
+                            <div class="modal-content">
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

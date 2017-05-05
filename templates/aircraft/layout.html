@@ -1,0 +1,128 @@
+{% extends 'layout.html' %}
+{% import 'admin/lib.html' as lib with context %}
+{% import 'admin/model/row_actions.html' as row_actions with context %}
+{% import './lib.html' as custom_lib with context %}
+
+{% block body%}
+<style>.basic_infomation td,.basic_infomation tr,.basic_infomation th,.basic_infomation{border:none !important;} </style>
+<link href="{{ url_for('static', filename='css/profile.css') }}" rel="stylesheet">
+<!-- BEGIN PROFILE SIDEBAR -->
+<div class="profile-sidebar" style="width: 250px;">
+    <!-- PORTLET MAIN -->
+    <div class="portlet light profile-sidebar-portlet">
+        <!-- SIDEBAR USERPIC -->
+        <div class="profile-userpic">
+            <img src="{{ url_for('static', filename='img/avatar1.jpg') }}" class="img-responsive" alt="">
+        </div>
+        <!-- END SIDEBAR USERPIC -->
+        <!-- SIDEBAR USER TITLE -->
+        <div class="profile-usertitle">
+            <div class="profile-usertitle-name">
+                  {{ title }}
+            </div>
+            <div class="profile-usertitle-job">
+                 AS350方案
+            </div>
+        </div>
+        <!-- END SIDEBAR USER TITLE -->
+        <!-- SIDEBAR BUTTONS -->
+        <div class="profile-userbuttons">
+            <button type="button" class="btn btn-circle btn-danger btn-sm">维护</button>
+            <button type="button" class="btn btn-circle green-haze btn-sm">保存</button>
+        </div>
+        <!-- END SIDEBAR BUTTONS -->
+        <!-- SIDEBAR MENU -->
+        <div class="profile-usermenu">
+            <ul class="nav">
+                <li class="active">
+                    <a href="{{ return_url }}details/?sub=basic&id={{ id }}">
+                    <i class="icon-home"></i>
+                    基本信息 </a>
+                </li>
+                <li>
+                    <a href="{{ return_url }}details/?sub=due_list&id={{ id }}">
+                    <i class="icon-settings"></i>
+                    到期列表 </a>
+                </li>
+                <li>
+                    <a href="{{ return_url }}details/?sub=flightlog&id={{ id }}">
+                    <i class="icon-check"></i>
+                    飞行日志 </a>
+                </li>
+                <li>
+                    <a href="#tab_1_4">
+                    <i class="icon-info"></i>
+                    维修日志 </a>
+                </li>
+            </ul>
+        </div>
+        <!-- END MENU -->
+    </div>
+    <!-- END PORTLET MAIN -->
+    <!-- PORTLET MAIN -->
+    <div class="portlet light">
+        <!-- STAT -->
+        <div class="row list-separated profile-stat">
+            <div class="col-md-6 col-sm-4 col-xs-6">
+                <div class="uppercase profile-stat-title">
+                     1005
+                </div>
+                <div class="uppercase profile-stat-text">
+                     小时
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-4 col-xs-6">
+                <div class="uppercase profile-stat-title">
+                     2006
+                </div>
+                <div class="uppercase profile-stat-text">
+                     次起落
+                </div>
+            </div>
+        </div>
+
+        <div class="row list-separated profile-stat">
+            <div class="col-md-6 col-sm-4 col-xs-6">
+                <div class="uppercase profile-stat-title">
+                     1
+                </div>
+                <div class="uppercase profile-stat-text">
+                     小时/月
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-4 col-xs-6">
+                <div class="uppercase profile-stat-title">
+                     1
+                </div>
+                <div class="uppercase profile-stat-text">
+                      次起落/月
+                </div>
+            </div>
+        </div>
+        <!-- END STAT -->
+    </div>
+    <!-- END PORTLET MAIN -->
+</div>
+<!-- END BEGIN PROFILE SIDEBAR -->
+<!-- BEGIN PROFILE CONTENT -->
+
+{% block content %}
+{% endblock %}
+
+<!-- END PROFILE CONTENT -->
+    <script>
+        function add_class(){
+            var body = document.body
+            body.setAttribute('class','page-header-fixed page-sidebar-closed-hide-logo page-sidebar-closed')
+        }
+        window.onload = function(){
+            add_class()
+            close_menu()
+        }
+        // 收起左侧菜单
+        function close_menu(){
+        $('.page-sidebar-menu').attr('class','page-sidebar-menu page-sidebar-menu-closed')
+        }
+    </script>
+    <!-- END PAGE CONTENT-->
+{% endblock %}

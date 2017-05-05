@@ -1,0 +1,66 @@
+{% macro delete_operation(action, row_id, row) %}
+{% endmacro %}
+
+{% macro group_link(action, url, icon, color='', label='') %}
+<a type="button" class="btn btn-group-item {{ color }}" href="{{ url }}" title="{{ action.title or '' }}">
+  <i class="fa {{ icon }}"></i>{{ label }}
+</a>
+{% endmacro %}
+
+{% macro edit_row(action, row_id, row) %}
+{{ group_link(action, get_url('.edit_view', id=row_id, url=return_url), 'fa-edit', 'green', '编辑') }}
+{% endmacro %}
+
+{% macro view_row(action, row_id, row) %}
+{{ group_link(action, get_url('.details_view', id=row_id, url=return_url), 'fa-eye', 'blue', '查看') }}
+{% endmacro %}
+
+<!-- 
+rollurl 为弹出框的表单提交的地址
+annotation 参数设为1代表需要审批意见
+-->
+{% macro choose_with_post(action, id, url, icon, color='', label='' , text='',  title='', annotation='') %}
+<a type="button" class="btn btn-group-item {{ color }}" onclick="return popup('{{ text }}', '{{ title }}', '{{ url }}', '{{ annotation }}');" title="{{ label }}"  data-toggle="modal" data-target="#myModal">
+  <i class="fa {{ icon }}">{{ label }}</i>
+</a>
+{% endmacro %}
+
+{% macro delete_row(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.delete_view', action='delete', id=row_id), ' fa-close (alias)', 'red', '删除', '确认要删除指定的数据吗', '删除') }}
+{% endmacro %}
+
+{% macro submit_review_row(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.custom_action', action='submit_review', id=row_id), 'fa-level-up', 'purple', '提交复核', '确认提交复核指定的数据吗？', '提交复核') }}
+{% endmacro %}
+
+{% macro review_approve_row(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.custom_action', action='review_approve', id=row_id), 'fa-check', 'green', '复核通过', '', '复核通过','1') }}
+{% endmacro %}
+
+{% macro review_again_row(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.custom_action', action='review_again', id=row_id), 'fa-level-up', 'green', '再次复核', '确认再次复核吗？', '再次复核', '') }}
+{% endmacro %}
+
+{% macro submit_approve_row(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.custom_action', action='submit_approve', id=row_id), 'fa-level-up', 'green', '提交审批', '确认提交审批指定的数据吗？', '提交审批', '') }}
+{% endmacro %}
+
+{% macro approved_row(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.custom_action', action='approved', id=row_id), 'fa-check', 'green', '审批通过', '', '审批通过','1') }}
+{% endmacro %}
+
+{% macro approve_again_row(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.custom_action', action='approve_again', id=row_id), 'fa-level-up', 'green', '再次审批', '确认再次审批吗？', '再次审批', '') }}
+{% endmacro %}
+
+{% macro cancel_row(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.custom_action', action='cancel', id=row_id), 'fa-share', 'red', '撤销', '确认撤销吗？', '撤销', '') }}
+{% endmacro %}
+
+{% macro review_refuse_row(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.custom_action', action='review_refuse', id=row_id), ' fa-ban', 'yellow', '复核拒绝', '确认复核拒绝吗？', '复核拒绝', '1') }}
+{% endmacro %}
+
+{% macro approve_refuse_row(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.custom_action', action='approve_refuse', id=row_id), ' fa-ban', 'yellow', '审批拒绝', '确认审批拒绝吗？', '审批拒绝', '1') }}
+{% endmacro %}

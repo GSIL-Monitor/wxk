@@ -1,0 +1,141 @@
+{% extends 'list.html' %}
+
+{% block head_tail %}
+  {{ super() }}
+  <link href="{{ url_for('static', filename='css/font-awesome.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/simple-line-icons.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/uniform.default.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/components-rounded.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/plugins.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/layout.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/light.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/magnific-popup.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block page_body %}
+
+<div class="clearfix">
+</div>
+<!-- BEGIN CONTAINER -->
+<div class="page-top">
+
+  <!-- END SIDEBAR -->
+  <!-- BEGIN CONTENT -->
+
+    <div class="content">
+{% if admin_view.box_color %}
+{% set box_color = admin_view.box_color %}
+{% else %}
+{% set box_color = 'green' %}
+{% endif %}
+
+{% if admin_view.menu_icon_value %}
+{% set icon_value = admin_view.menu_icon_value %}
+{% else %}
+{% set icon_value = 'fa-cogs' %}
+{% endif %}
+
+{% block head %}
+  {{ super() }}
+  {{ lib.form_css() }}
+{% endblock %}
+
+<div class="portlet box {{ box_color }}">
+  {% block model_menu_bar scoped %}
+  <div class="portlet-title">
+    <div class="caption">
+      {% block model_menu_title %}
+      查看 -{{ admin_view.name|capitalize }} {% if count %}[{{count}}]{% endif %}
+      {% endblock %}
+    </div>
+
+      {% endblock %}
+    </div>
+{% block model_list_table %}
+<div class="portlet-body">
+
+  {% block details_search %}
+  <div class="row">
+    <div class="col-md-6 col-sm-12">
+      <div class="input-group fa_filter_container ">
+        <span class="input-group-addon">{{ _gettext('过滤') }}</span>
+        <input id="fa_filter" type="text" class="form-control">
+      </div>
+    </div>
+  </div>
+  {% endblock %}
+
+  {% block details_table %}
+  <div class="table-scrollable">
+  <table class="table table-hover table-striped table-bordered searchable">
+    {% for key, v in details_columns %}
+      <tr>
+        <td >
+          <b>{{ v }}</b>
+        </td>
+        <td>
+        {% if key == 'createdAt' %}
+        {{ get_value(model, key).strftime('%Y-%m-%d') }}
+        {% elif key == 'updatedAt' %}
+        {{ get_value(model, key).strftime('%Y-%m-%d') }}
+        {% elif key == 'category' %}
+	      {% for item in get_value(model, key) %}
+	        {{item }}
+	      {% endfor %}
+        {% elif key == 'specifications' %}
+	      {% for item in get_value(model, key) %}
+	        {{item }}
+	      {% endfor %}
+        {% elif key == 'businesses' %}
+	      {% for item in get_value(model, key) %}
+	        {{item }}
+	      {% endfor %}
+        {% elif key== 'certifications' %}
+        {{ certifications }}
+        {% elif key== 'businessLicense' %}
+        {{ businessLicense }}
+        {% elif not get_value(model, key) %}
+        {{ ''}}
+        {% else %}
+        {{ get_value(model, key) }}
+        {% endif %}
+        </td>
+      </tr>
+
+    {% endfor %}
+  </table>
+  </div>
+  {% endblock %}
+</div>
+{% endblock %}
+
+
+
+
+  </div>
+  <!-- END CONTENT -->
+</div>
+<!-- END CONTAINER -->
+{% endblock %}
+
+{% block tail %}
+  {{super()}}
+  <script src="{{ admin_static.url(filename='admin/js/details_filter.js', v='1.0.0') }}"></script>
+<script src="{{ url_for('static', filename='js/metronic.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='js/layout.js') }}" type="text/javascript"></script>
+<script>
+  jQuery(document).ready(function() {
+    Metronic.init();
+    Layout.init();
+  });
+</script>
+<script src="{{ url_for('static', filename='js/jquery.magnific-popup.min.js') }}" type="text/javascript"></script>
+<script>
+ jQuery(document).ready(function() {
+   $('.popup-link').magnificPopup({
+     type: 'image'
+   });
+ });
+</script>
+{% endblock %}

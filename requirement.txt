@@ -1,0 +1,11 @@
+flask>=0.10.1
+Flask-Admin>=1.4.2
+Flask-Script
+Pillow
+flask-security==1.7.5
+flask-sqlalchemy
+flask-pymongo
+uwsgidecorators
+easy_date
+transitions
+requests

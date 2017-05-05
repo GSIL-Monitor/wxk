@@ -1,0 +1,30 @@
+{% extends 'list.html' %}
+{% import './lib.html' as ctx with context %}
+{% from 'admin/lib.html' import extra with context %}
+
+{% block head %}
+  {{ super() }}
+  {{ lib.form_css() }}
+{% endblock %}
+
+{% block model_menu_title %}
+编辑 - {{ admin_view.name|capitalize }}
+{% endblock %}
+
+{% block model_menu_actions %}
+{% endblock %}
+
+{% block model_list_table %}
+<div class="portlet-body form">
+  {% block create_form scoped %}
+    {{ ctx.render_custom_form(form, return_url, extra(), form_opts=form_opts) }}
+  {% endblock %}
+</div>
+{% endblock %}
+
+{% block list_pager %}{% endblock %}
+
+{% block tail %}
+  {{super()}}
+  {{lib.form_js()}}
+{% endblock %}
