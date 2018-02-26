@@ -1,21 +1,26 @@
 {% extends 'aircraft/layout.html' %}
+{% import 'actions.html' as act with context %}
+{% import 'lib.html' as lib with context %}
 
 {% block content %}
+<style>
+    .table .btn{margin-right:0px;}
+</style>
 <div class="profile-content">
     <div class="row">
         <div class="col-md-12">
-            <div class="portlet light">
-                <div class="portlet-body">
+            <div class="portlet light" style="padding: 0">
+                <div class="portlet-body" style="padding: 0">
                     <div class="tab-content">
                         <!-- PRIVACY SETTINGS TAB -->
-                            <div class="portlet box red">
+                            <div class="portlet box blue">
                                 <div class="portlet-title">
                                     <div class="caption">
-                                        <i class="fa fa-cogs"></i>飞行日志
+                                        <i class="icon-pointer"></i>飞行日志
                                     </div>
                                     <div class="actions">
-                                        {% if admin_view.can_create %}
-                                          {{ lib.add_modal_button(url=get_url('.create_view', id=id, url=return_url, modal=True), content='<i class="fa fa-plus"></i>创建', btn_class='btn btn-default btn-sm') }}
+                                        {% if admin_view.can_create_flightlog %}
+                                          {{ lib.add_modal_button(url=get_url('.create_view',sub='flightlog', id=id, type=model.planeType, modal=True), content='<i class="fa fa-plus"></i>创建', btn_class='btn btn-default btn-sm') }}
                                         {% endif %}
                                     </div>
                                 </div>
@@ -23,29 +28,8 @@
                                 <div class="portlet-body">
                                     <div class="table-scrollable">
                                         <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>编号</th> 
-                                                <th>起飞时间</th>
-                                                <th>降落时间</th>
-                                                <th>操作</th>
-                                            </tr>
-                                        </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>{{ model.id }}</td>
-                                                <td>{{ model.departureTime }}</td>
-                                                <td>{{ model.landingTime }}</td>
-                                                <td>
-                                                    {% block list_row_actions scoped %}
-                                                    <div class="btn-group btn-group-xs btn-group-solid">
-                                                      {% for action in list_row_actions %}
-                                                        {{ action.render_ctx(get_pk_value(row), row) }}
-                                                      {% endfor %}
-                                                    </div>
-                                                    {% endblock %}
-                                                </td>
-                                            </tr>
+                                            {{ custom_lib.render_table(admin_view, list_columns, data, get_value, list_row_actions, get_pk_value, row_actions, num_pages, page, page_size, pager_url) }}
                                         </tbody>
                                         </table>
                                     </div>
@@ -68,26 +52,10 @@
 </div>
 {% endblock %}
 
-{% block tail %}
+{% block custom_tail %}
 <script>
     $(function(){
-        //菜单高亮
-        $('.profile-usermenu a').each(function(){
-            var href = $(this).attr('href')
-            var sub_action = href.split('sub=')[1];
-            sub_action = sub_action.split('&')[0]
-            if(href.indexOf('flightlog') >= 0){
-                $(this).parent().addClass('active')
-            }else{
-                $(this).parent().removeClass('active')
-            }
-        })
-       $(document).on('click','.btn-sm',function(){
-                alert()
-            setTimeout(3000, function(){
-                 $('.navbar-fixed-top').hide()
-            })
-       })
+        $('.table-scrollable.table-responsive').hide()
     })
 </script>
 {% endblock %}

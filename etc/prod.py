@@ -1,5 +1,8 @@
+# coding: utf-8
+
+from __future__ import unicode_literals
+
 import os
-import datetime
 
 DEBUG = False
 TESTING = False
@@ -12,12 +15,12 @@ if 'SERVER_NAME' in os.environ:
     SERVER_NAME = os.environ['SERVER_NAME']
 
 #: site
-SITE_TITLE = '机务维修管理系统'
+SITE_TITLE = '徐州农用航空站通航信息化系统'
 SITE_URL = '/'
 
 #: session
 SESSION_COOKIE_NAME = '_s'
-#SESSION_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
 PERMANENT_SESSION_LIFETIME = 3600 * 24 * 30
 
 GRAVATAR_BASE_URL = 'http://www.gravatar.com/avatar/'
@@ -44,13 +47,47 @@ SECURITY_POST_REGISTER_VIEW = "/admin/"
 
 # 不准通过通航云管理平台的注册界面进行注册
 SECURITY_REGISTERABLE = False
-SECURITY_SEND_REGISTER_EMAIL = True # 由于脚本默认不激活
+SECURITY_SEND_REGISTER_EMAIL = True  # 由于脚本默认不激活
 SECURITY_TRACKABLE = True
-SECURITY_CONFIRMABLE = True
+SECURITY_CONFIRMABLE = False
 SECURITY_EMAIL_SENDER = 'no-reply@hfga.com.cn'
+
+CACHE_TYPE = 'simple'
 
 # 与邮件发送相关的配置
 MAIL_SERVER = 'smtp.qiye.163.com'
 MAIL_DEFAULT_SENDER = ('no-reply', 'no-reply@hfga.com.cn')
 MAIL_USERNAME = 'no-reply@hfga.com.cn'
 MAIL_PASSWORD = 'BJ@hfga.com.cn33'
+
+# 与维修客配置相关的信息
+WXK_API_BASE = os.environ['WXK_API_BASE']
+PLATFORM_API_BASE = os.environ['PLATFORM_API_BASE']
+WXK_ACCESS_ROLE = 'wxk-platform-access'
+# 真正部署的时候，与维修配置相关的用户名和密码最好使用环境变量
+WXK_USERNAME = os.environ['WXK_USERNAME']
+WXK_PASSWORD = os.environ['WXK_PASSWORD']
+MONGO_DBNAME = os.environ['WXK_MONGODB_NAME']
+SQLALCHEMY_DATABASE_URI = os.environ['WXK_MYSQL_DB']
+MONGO_HOST = os.environ['WXK_MONGO_HOST']
+MONGO_PORT = int(os.environ['WXK_MONGO_PORT'])
+WXK_GROUP = os.environ['WXK_GROUP']
+
+# 与REDIS相关的配置
+REDIS_HOST = 'redis'
+REDIS_PORT = 6379
+REDIS_USER_DBID = 15                # 目前该实现需要一个特殊的DB来存放与用户缓存数据相关的内容
+
+HOMEPAGE_MAX_COUNT = 8          # 首页各项显示的最多条数
+
+# rebbitmq配置
+MQ_HOST = 'rabbitmq'
+MQ_USERNAME = 'admin'
+MQ_PASSWORD = '123456'
+MQ_VHOST = '/'
+MQ_EXCHANGE = 'tonghangyun-cache-exchange'
+MQ_TIMEOUT = 3
+FILE_ROUTING_KEY = 'related-file'
+
+# 机型配置
+PLANE_TYPE = '运5B(D)'

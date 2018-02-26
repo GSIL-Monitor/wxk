@@ -1,0 +1,80 @@
+{% import 'admin/static.html' as admin_static with context%}
+{% import 'admin/lib.html' as lib with context %}
+
+{# store the jinja2 context for form_rules rendering logic #}
+{% set render_ctx = h.resolve_ctx() %}
+
+{% block body %}
+<style>
+  .icon-calendar:before,.icon-time:before{content:initial;}
+   .bootstrap-datetimepicker-widget{z-index: 20000}
+   .dropdown-menu{position: absolute;display: none;float: left;min-width: 160px;}
+  li{list-style: none;}
+  button.close{background-image: url(/static/img/remove-icon-small.png);}
+</style>
+
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"></span></button>
+    {% block header_text %}
+      <h3>{{ _gettext('Details Record') + ' #' + request.args.get('id') }}{{SS}}</h3>
+    {% endblock %}
+  </div>
+  <div class="modal-body">
+    {# "save and continue" button is removed from modal (it won't function properly) #}
+    {% block details_table %}
+    <div class="table-scrollable">
+    <table class="table table-hover table-striped table-bordered searchable">
+      {% for c, name in details_columns %}
+        {% if c in ['flightDate','landingTime','logTime','departureTime'] %}
+        <tr>
+          <td style="min-width: 150px;">
+            <b>{{ name }}</b>
+          </td>
+          <td>
+          {% if get_value(model, c) %}
+            {{ get_value(model, c) | uniform_datetime_to_str('%Y-%m-%d %H:%M:%S')}}
+          {% endif %}
+          </td>
+        </tr>
+
+        {% else %}
+        <tr>
+          <td style="min-width: 150px;">
+            <b>{{ name }}</b>
+          </td>
+          <td>
+          {{ get_value(model, c) }}
+          </td>
+        </tr>
+        {% endif %}
+      {% endfor %}
+    </table>
+    </div>
+    {% endblock %}
+  </div>
+{% endblock %}
+
+{% block tail %}
+  <script src="{{ admin_static.url(filename='admin/js/bs3_modal.js', v='1.0.0') }}"></script>
+  <script src="{{ url_for('static', filename='js/interval.js') }}" type="text/javascript">
+  </script>
+  <script src="{{ url_for('static', filename='js/start_tracking.js') }}" type="text/javascript">
+  </script>
+  <script src="{{ url_for('static', filename='js/editform-validation.js') }}" type="text/javascript">
+  </script>
+  <script type="text/javascript">
+   jQuery(document).ready(function() {
+     $('.popup-link').magnificPopup({
+       type: 'image'
+     });
+     var picker = $('.datepicker');
+     if (picker.length) {
+       picker.datepicker({
+         language: 'zh-CN',
+         autoclose: true,
+       });
+     }
+   });
+
+  </script>
+{% endblock %}

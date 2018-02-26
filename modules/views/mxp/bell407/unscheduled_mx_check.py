@@ -4,18 +4,17 @@ from __future__ import unicode_literals
 
 from modules.forms.bell407.unscheduled_mx_check import UnscheduledMxCheckForm
 from .tranlate_column import column_labels
+from ..title import GeneralUnscheduledTitle
 
 
 def UnscheduledMxCheck():
     return{
         '_api_url': '/v1/mxp/bell407/unscheduled-mx-check/',
         'column_list': [
-            'id', 'category', 'description',
-            'relateDoc', 'remark', 'accessory',
+            'id', 'category', 'description', 'remark'
         ],
         'column_labels': column_labels,
         'form': UnscheduledMxCheckForm,
-
-        'title': '非定期/特殊检查',
+        'title': GeneralUnscheduledTitle,
         'coll_name': 'unscheduled_mx_check_bell407'
     }

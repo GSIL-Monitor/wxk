@@ -1,0 +1,58 @@
+{% extends 'details.html' %}
+
+{% block details_table %}
+<div class="table-scrollable">
+  <table class="table table-striped table-bordered searchable">
+    {# 下面的内容依赖于定义column_details_list顺序，不要乱改 #}
+    <tr>
+      <td>
+        <b>权限名</b>
+      </td>
+      <td colspan="2">
+        {{ get_value(model, 'name') }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <b>权限职责说明</b>
+      </td>
+      <td colspan="2">
+        {{ get_value(model, 'description') }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <b>关联用户</b>
+      </td>
+      <td colspan="2">
+        {{ get_value(model, 'users') }}
+      </td>
+    </tr>
+    {% set actions, len = allowed_actions(model) %}
+    {% set total_row = len + 1 %}
+    <tr>
+      <td rowspan="{{ total_row }}">
+        <b>允许的操作</b>
+      </td>
+      <td><b>界面</b></td>
+      <td><b>允许的操作</b></td>
+    </tr>
+    {% for view_name, verbs in actions.items() %}
+    <tr>
+      <td>{{ view_name }}</td>
+      <td>{{ verbs }}</td>
+    </tr>
+    {% endfor %}
+    <tr>
+      <td>返回</td>
+      <td>
+        <div class="btn-group btn-group-xs btn-group-solid">
+          <a href="{{ url_for('.index_view') }}" class="btn btn-group-item btn-success" role="button">
+            <i class="fa fa-level-up">返回</i>
+          </a>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+{% endblock %}

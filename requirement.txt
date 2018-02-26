@@ -1,11 +1,29 @@
-flask>=0.10.1
-Flask-Admin>=1.4.2
 Flask-Script
+Flask-Admin>=1.4.2
+flask_pymongo
+flask_sqlalchemy
+flask_security>=3.0.0
+flask_babelex
 Pillow
-flask-security==1.7.5
-flask-sqlalchemy
-flask-pymongo
+pika==0.10.0
 uwsgidecorators
 easy_date
 transitions
+qiniu==7.1.9
 requests
+flask_caching
+wtforms_json
+wtforms_sqlalchemy
+SQLAlchemy-Continuum
+Flask-WeasyPrint
+alembic
+tablib
+pymysql
+openpyxl==2.4.9
+SQLAlchemy==1.1.15
+Werkzeug==0.13
+# 在特定的平台上需要安装下面的库以运行mysql相关的功能
+# mysql
+
+# 主要用一些redis相关的内容
+git+http://anonymous:readonly@192.168.101.21/r/tonghangyun/py/common#egg=tonghangyun-common

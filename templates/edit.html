@@ -17,14 +17,9 @@
 {% block model_list_table %}
 <div class="portlet-body form">
   {% block create_form scoped %}
-    {{ ctx.render_custom_form(form, return_url, extra(), form_opts=form_opts) }}
+    {{ ctx.render_custom_form_two_line(form, return_url, one_line_columns, extra(), form_opts=form_opts) }}
   {% endblock %}
 </div>
 {% endblock %}
 
 {% block list_pager %}{% endblock %}
-
-{% block tail %}
-  {{super()}}
-  {{lib.form_js()}}
-{% endblock %}

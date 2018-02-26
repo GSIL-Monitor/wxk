@@ -8,32 +8,40 @@ from ..base import Model
 
 
 class AirmaterialList(Model):
-    "航材首页的模型定义"
+    "航材列表的模型定义"
 
     # 为了兼容原外包实现的名称
-    __tablename__ = 'product'
+    __tablename__ = 'airmaterial_list'
 
     id = schema.Column(types.Integer, primary_key=True)
-    partNumber = schema.Column(types.String(100))
-    sequenceNumber = schema.Column(types.String(100))
-    name = schema.Column(types.String(100))
-    price = schema.Column(types.String(100))
-    applicableModel = schema.Column(types.String(100))
-    status = schema.Column(types.String(100))
-    shelf = schema.Column(types.String(100))
-    source = schema.Column(types.String(100))
-    use1 = schema.Column(types.String(100))
-    supplierName = schema.Column(types.String(100))
-    certificateNumber = schema.Column(types.String(100))
-    document = schema.Column(types.String(100))
-    file = schema.Column(types.String(100))
-    remark = schema.Column(types.String(255))
-    effectiveTime = schema.Column(types.String(100))
-    unit = schema.Column(types.String(100))
-    size = schema.Column(types.String(100))
-    minStock = schema.Column(types.String(100))
-    inboundDate = schema.Column(types.String(100))
-    outboundDate = schema.Column(types.String(100))
-    type = schema.Column(types.String(255))
-    nextCheckDate = schema.Column(types.String(255))
-    warningColor = schema.Column(types.String(255))
+    # 航材件号
+    partNumber = schema.Column(types.String(255))
+    # 航材名称
+    name = schema.Column(types.String(255))
+    # category 类型
+    category = schema.Column(types.String(255))
+    # model 型号
+    model = schema.Column(types.String(255))
+    # applicableModel 适用机型
+    applicableModel = schema.Column(types.String(255))
+    # maintenanceRules 维修规则
+    maintenanceRules = schema.Column(types.String(255))
+    # mIntervalType 维修方案类型
+    mIntervalType = schema.Column(types.String(255))
+    # mIntervalBase 维修方案基准值
+    mIntervalBase = schema.Column(types.String(255))
+    # intervalup 上限
+    intervalupByFlightTime = schema.Column(types.Float)
+    # intervaldown 下限
+    intervaldownByFlightTime = schema.Column(types.Float)
+    # statusName 状态值
+    statusName = schema.Column(types.String(100))
+
+
+    @property
+    def status(self):
+        return self.statusName
+
+    @status.setter
+    def status(self, value):
+        self.statusName = value

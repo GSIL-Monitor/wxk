@@ -26,6 +26,3 @@ class MaintenanceStatus(Model):
     remainfxcs = schema.Column(types.Integer)
     addDate = schema.Column(types.DateTime)
     airLxgzId = schema.Column(types.Integer)
-
-    createTime = schema.Column(types.DateTime)
-    updateTime = schema.Column(types.DateTime)

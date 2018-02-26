@@ -1,0 +1,24 @@
+{% extends 'list.html' %}
+{% import './lib.html' as ctx with context %}
+
+{% block head %}
+  {{ super() }}
+  {{ lib.form_css() }}
+{% endblock %}
+
+{% block model_menu_title %}
+创建 - {{ admin_view.name|capitalize }}
+{% endblock %}
+
+{% block model_menu_actions %}
+{% endblock %}
+
+{% block model_list_table %}
+<div class="portlet-body form">
+  {% block create_form scoped %}
+        {{ ctx.render_custom_form_two_line(form, return_url, one_line_columns, None, form_opts=form_opts, widgth=4) }}
+  {% endblock %}
+</div>
+{% endblock %}
+
+{% block list_pager %}{% endblock %}

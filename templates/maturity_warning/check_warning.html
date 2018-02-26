@@ -1,0 +1,152 @@
+{% extends 'layout.html' %}
+
+{% block custom_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.tag-editor.css') }}">
+{% endblock %}
+
+{% block body %}
+{% with messages = get_flashed_messages(with_categories=True) %}
+  {% if messages %}
+    {% for category, m in messages %}
+      {% if category %}
+      {# alert-error changed to alert-danger in bootstrap 3, mapping is for backwards compatibility #}
+      {% set mapping = {'message': 'info', 'error': 'danger'} %}
+      <div class="alert alert-{{ mapping.get(category, category) }} alert-dismissable">
+      {% else %}
+      <div class="alert alert-dismissable">
+      {% endif %}
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        {{ m }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+<style type="text/css">
+
+ul.yellowField:before {
+    content: "";
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    background-color: yellow;
+    border-radius: 0%;
+}
+ul.orangeFiled:before {
+    content: "";
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    background-color: orange;
+    border-radius: 0%;
+}
+ul.redFiled:before {
+    content: "";
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    background-color: red;
+    border-radius: 0%;
+}
+</style>
+      <div class="portlet light">
+      <div class="portlet-title">
+        <div class="caption">
+          <i class="icon-bell"></i> 检查预警值配置
+        </div>
+        <div class="tools">
+          <a href="" class="collapse" data-original-title="" title="">
+          </a>
+        </div>
+      </div>
+      <div class="portlet-body form">
+      <form action="{{ get_url('.index') }}" method="post">
+        {{ form.hidden_tag }}
+        <div class="row">
+          <div class="col-md-4">           
+            <h4 class=""><ul class="yellowField">&nbsp;&nbsp;当低于以下数值时黄色预警</ul></h4>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2">
+            <h4 class=""></h4>
+          </div>
+          {{ render_field(form.warningfiled_yellow, form.errors.warningfiled_yellow, '天') }}
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <h4 class=""><ul class="orangeFiled">&nbsp;&nbsp;当低于以下数值时为橙色预警</ul></h4>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2">
+            <h4 class=""></h4>
+          </div>
+          {{ render_field(form.warningfiled_orange, form.errors.warningfiled_orange, '天') }}
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <h4 class=""><ul class="redFiled">&nbsp;&nbsp;当低于以下数值时为红色</ul></h4>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2">
+            <h4 class=""></h4>
+          </div>
+          {{ render_field(form.warningfiled_red, form.errors.warningfiled_red, '天') }}
+        </div>
+        <br>
+        <div class="form-actions">
+          <div class="row">
+            <div class="col-md-offset-3 col-md-9">
+              <button type="submit" class="btn btn-success">更新</button>
+            </div>
+          </div>
+        </div>
+      </form>
+      </div>
+      </div>
+
+{% endblock %}
+
+
+{% macro render_field(field, field_errors, unit) %}
+<div class="col-md-2">
+  <div class="input-group">
+    {{ field() }}
+    <span class="input-group-addon">{{ unit }}</span>
+  </div>
+  <ul class="help-block input-errors">
+  {% for error in field_errors %}
+    <li>{{error}}</li>
+  {% endfor %}
+  </ul>
+</div>
+{% endmacro %}
+
+{% macro render_date_field(field, field_type, field_errors) %}
+<div class="col-md-2">
+  <div class="input-group">
+    <div class="row">
+      <div class="col-md-7">
+        {{ field() }}
+      </div>
+      <div class="col-md-5">
+        {{ field_type() }}
+      </div>
+    </div>
+    <ul class="help-block input-errors">
+    {% for error in field_errors %}
+    <li>{{error}}</li>
+    {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endmacro %}
+
+{% block custom_tail %}
+<script src="{{ url_for('static', filename='js/jquery.caret.min.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='js/jquery.tag-editor.min.js') }}" type="text/javascript"></script>
+<script type="text/javascript">
+ $('#doc_type').tagEditor({ initialTags: {{ support_doctypes|tojson }} });
+</script>
+{% endblock %}

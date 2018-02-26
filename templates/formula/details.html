@@ -1,0 +1,54 @@
+{% extends 'details.html' %}
+
+{% block details_table %}
+<div class="table-scrollable">
+  <table class="table table-striped table-bordered searchable">
+    {# 下面的内容依赖于定义column_details_list顺序，不要乱改 #}
+    <tr>
+      <td>
+        <b>配方编号</b>
+      </td>
+      <td colspan="2">
+        {{ get_value(model, 'number') }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <b>配方名称</b>
+      </td>
+      <td colspan="2">
+        {{ get_value(model, 'name') }}
+      </td>
+    </tr>
+    {% set pesticides, len = formula(model) %}
+    {% set total_row = len + 1 %}
+    {% if total_row != 1 %}
+        <tr>
+        <td rowspan="{{ total_row }}">
+            <b>所需农药</b>
+        </td>
+        <td><b>农药</b></td>
+        <td><b>重量</b></td>
+        </tr>
+        {% for pesticide in pesticides %}
+            {% for p, w in pesticide.items() %}
+            <tr>
+            <td>{{ p }}</td>
+            <td>{{ w }}</td>
+            </tr>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+    <tr>
+      <td>返回</td>
+      <td>
+        <div class="btn-group btn-group-xs btn-group-solid">
+          <a href="{{ url_for('.index_view') }}" class="btn btn-group-item btn-success" role="button">
+            <i class="fa fa-level-up">返回</i>
+          </a>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+{% endblock %}

@@ -1,8 +1,30 @@
 {% extends 'list.html' %}
+{% import 'operations.html' as custom_op with context %}
+{% from './lib.html' import popup_form  as cp_form with context%}
 
 {% block head %}
   {{ super() }}
   {{ lib.form_css() }}
+  {% if inline_table %}
+    <link href="{{ url_for('static', filename='css/handsontable.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/inline-table.css') }}" rel="stylesheet">
+    <style type="text/css">
+        .table-scrollable table tbody td {
+            margin: 10px 0 !important;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        .handsontable table thead th {
+            font-size: 16px;
+            padding: 2px;
+        }
+
+        .handsontable table tbody td {
+            font-size: 16px;
+        }
+    </style>
+  {% endif %}
 {% endblock %}
 
 {% block model_menu_title %}
@@ -12,10 +34,7 @@
 {% block model_menu_actions %}
 {% endblock %}
 
-
 {% block model_list_table %}
-<div class="portlet-body">
-
   {% block details_search %}
   <div class="row">
     <div class="col-md-6 col-sm-12">
@@ -29,21 +48,78 @@
 
   {% block details_table %}
   <div class="table-scrollable">
-  <table class="table table-hover table-striped table-bordered searchable">
-    {% for c, name in details_columns %}
-      <tr>
-        <td style="min-width: 150px;">
-          <b>{{ name }}</b>
-        </td>
-        <td>
-        {{ get_value(model, c) }}
-        </td>
-      </tr>
+  <table class="table   table-bordered searchable">
+    {% for x in range(0, details_columns |length, 2) %}
+        <tr>
+          {% if details_columns[x][0] in review_details_columns and details_columns[x][0] not in one_line_columns %}
+          <td style="width: 150px;">
+            <b>{{ details_columns[x][1] }}</b>
+          </td>
+          <td style="min-width: 250px;">
+          {{ get_value(model, details_columns[x][0]) }}
+          </td>
+          {% else %}
+          {% endif %}
+          {% if x + 1 < details_columns |length %}
+          {% if details_columns[x+1][0] in review_details_columns and details_columns[x+1][0] not in one_line_columns %}
+          <td style="width: 150px;">
+            <b>{{ details_columns[x+1][1] }}</b>
+          </td>
+          <td style="min-width: 250px;">
+          {{ get_value(model, details_columns[x+1][0]) }}
+          </td>
+          {% endif %}
+          {% endif %}
+        </tr>
     {% endfor %}
-  </table>
+      </table>
+
+    <table class="table  table-bordered searchable">
+    {% for x in range(0, details_columns |length) %}
+      {% if details_columns[x][0] in one_line_columns %}
+        <tr>
+          <td style="width: 150px;">
+            <b>{{ details_columns[x][1] }}</b>
+          </td>
+          <td style="min-width: 250px;">
+          {{ get_value(model, details_columns[x][0]) }}
+          </td>
+        </tr>
+      {% endif %}
+    {% endfor %}
+</table>
+    <table class="table  table-bordered searchable">
+    {% for x in range(review_details_columns|length, details_columns |length, 2) %}
+        <tr>
+          {% if details_columns[x][0] not in review_details_columns and details_columns[x][0] not in one_line_columns %}
+          <td style="width: 150px;">
+            <b>{{ details_columns[x][1] }}</b>
+          </td>
+          <td style="min-width: 250px;">
+          {{ get_value(model, details_columns[x][0]) }}
+          </td>
+          {% endif %}
+          {% if x + 1 < details_columns |length %}
+          {% if details_columns[x+1][0] not in review_details_columns and details_columns[x+1][0] not in one_line_columns %}
+          <td style="width: 150px;">
+            <b>{{ details_columns[x+1][1] }}</b>
+          </td>
+          <td style="min-width: 250px;">
+          {{ get_value(model, details_columns[x+1][0]) }}
+          </td>
+          {% endif %}
+          {% endif %}
+        </tr>
+    {% endfor %}
+</table>
+
+
   </div>
   {% endblock %}
-</div>
+
+  {% if inline_table%}
+    <div id="inline_table"></div>
+  {% endif %}
 {% endblock %}
 
 {% block list_pager %}{% endblock %}
@@ -51,4 +127,18 @@
 {% block tail %}
   {{super()}}
   <script src="{{ admin_static.url(filename='admin/js/details_filter.js', v='1.0.0') }}"></script>
+  {% if inline_table %}
+  <script src="{{ url_for('static', filename='js/handsontable.min.js') }}" type="text/javascript"></script>
+  <script src="{{ url_for('static', filename=extra_table_js) }}" type="text/javascript"></script>
+  <script type="text/javascript">
+    var columns = eval('{{ table_columns|safe }}');
+    var datas = eval('{{ table_datas|safe }}');
+    $(function() {
+        inLineTable.init({
+            table_datas: datas,
+            table_columns: columns,
+        });
+    });
+  </script>
+  {% endif %}
 {% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'list.html' %}
+{% import './lib.html' as ctx with context %}
+{% from 'admin/lib.html' import extra with context %}
+
+{% block head %}
+  {{ super() }}
+  {{ lib.form_css() }}
+{% endblock %}
+
+{% block model_menu_title %}
+创建 - {{ admin_view.name|capitalize }}
+{% endblock %}
+
+{% block model_menu_actions %}
+{% endblock %}
+
+{% block model_list_table %}
+<div class="portlet-body form">
+  {% block create_form scoped %}
+    {{ ctx.render_custom_form_two_line(form, return_url, ['imageUrl', 'etag']
+, None, form_opts=form_opts, widgth=4) }}
+  {% endblock %}
+</div>
+{% endblock %}
+
+{% block list_pager %}{% endblock %}
+
+{% block tail %}
+{{ super() }}
+<script type="text/javascript">
+  $(document).on('click', "input.btn-circle", function(){
+    $(this).attr('disabled','disabled')
+    $(".admin-form").submit()
+  })
+</script>
+<script>
+  $(function(){
+    $(".datepicker-inline").hide()
+    $(".input-medium").css({
+      'width':'240px',
+      'position': 'relative',
+      'display': 'table',
+      'border-collapse':'separate',
+    })
+    $('.datepicker-orient-left').remove()
+  })
+</script>
+{% endblock %}

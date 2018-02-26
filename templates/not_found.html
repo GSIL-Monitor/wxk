@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ admin_view.name }}</title>
+    <link href="{{ url_for('static', filename='css/error.css') }}" rel="stylesheet" type="text/css">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+</head>
+<body class="page-404-full-page" style="background: url('/static/img/404bg.png');">
+     <div class="row">
+        <div class="col-md-12 page-404">
+            <div class="details">
+                <img src="{{ url_for('static', filename='img/404.png') }}" alt=""
+                width="100%" usemap="#a">
+            </div>
+            <div style="    margin-top: 27px;">
+                <a href="/admin"><img src="{{ url_for('static', filename='img/backhome.png') }}" alt=""></a>
+            </div>
+        </div>
+     </div>
+ </body>
+</html>
+ 

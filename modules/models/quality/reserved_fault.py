@@ -5,43 +5,46 @@ from __future__ import unicode_literals
 from sqlalchemy import schema, types
 
 from ..base import Model
+from ..audit import AuditModel
+from ..id_generator import id_generator
 
 
-class ReservedFault(Model):
+class ReservedFault(Model, AuditModel):
     "保留故障的模型定义"
 
     # 为了兼容原外包实现的名称
     __tablename__ = 'air_blguzhang'
 
-    id = schema.Column(types.Integer, primary_key=True)
-    approveSuggestions = schema.Column(types.String(255))
-    approveTime = schema.Column(types.DateTime)
-    approveUserName = schema.Column(types.String(255))
-    blQiXian = schema.Column(types.DateTime)
-    blYuanyin = schema.Column(types.String(255))
-    blguzhangDesc = schema.Column(types.String(255))
-    blguzhangNum = schema.Column(types.String(255))
-    brmarks = schema.Column(types.String(255))
-    caiqucuoshi = schema.Column(types.String(255))
-    fdjxlNum = schema.Column(types.String(255))
-    flyTime = schema.Column(types.String(255))
-    insNum = schema.Column(types.String(255))
-    needHangCai = schema.Column(types.String(255))
-    needgongjushebei = schema.Column(types.String(255))
-    planeType = schema.Column(types.String(255))
-    reviewSuggestions = schema.Column(types.String(255))
-    reviewTime = schema.Column(types.DateTime)
-    reviewUserName = schema.Column(types.String(255))
-    riQi = schema.Column(types.DateTime)
-    shenqingPerson = schema.Column(types.String(255))
-    statusName = schema.Column(types.String(255))
-    xunHuan = schema.Column(types.Integer)
-    yuliuCon = schema.Column(types.String(255))
-    yuqigaizhengFanfang = schema.Column(types.String(255))
-    zhiZhaoHao = schema.Column(types.String(255))
-    zhuceNum = schema.Column(types.String(255))
-    fhblqx = schema.Column(types.DateTime)
-    spblqx = schema.Column(types.DateTime)
+    def _id_generator():
+        return id_generator('BLGZ', ReservedFault, 'reservedNum')
 
-    creatTime = schema.Column(types.DateTime)
-    updateTime = schema.Column(types.DateTime)
+    id = schema.Column(types.Integer, primary_key=True)
+    reservedNum = schema.Column(types.String(255), default=_id_generator)
+    planeType = schema.Column(types.String(255))
+    flyhours = schema.Column(types.Float)
+    jihao = schema.Column(types.String(255))
+    engineNum = schema.Column(types.String(255))
+    measure = schema.Column(types.String(255))
+    limit = schema.Column(types.String(255))
+    proposer = schema.Column(types.String(255))
+    date = schema.Column(types.String(255))
+    licenceNO = schema.Column(types.String(255))
+    remarks = schema.Column(types.String(255))
+
+    description = schema.Column(types.String(255))
+    expectAlter = schema.Column(types.String(255))
+    reason = schema.Column(types.String(255))
+
+    statusName = schema.Column(types.String(255))
+
+    @property
+    def status(self):
+        return self.statusName
+
+    @status.setter
+    def status(self, value):
+        self.statusName = value
+
+    @property
+    def business_id(self):
+        return self.reservedNum

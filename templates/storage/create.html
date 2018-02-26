@@ -1,0 +1,25 @@
+{% extends 'create.html' %}
+
+  {% block create_form scoped %}
+    <form action="{{ action or '' }}" method="POST" role="form" class="admin-form form-horizontal form-bordered form-row-stripped" enctype="multipart/form-data">
+      <div class="form-body">
+        {{ lib.render_form_fields(form, form_opts=form_opts) }}
+      </div>
+      <div class="form-actions">
+        <div class="row">
+          <div class="col-md-offset-4 col-md-9">
+            {% if agreed %}
+              <input type="submit" class="btn btn-primary" value="{{ agreed[0] }}" name="{{ agreed[1] }}" />
+            {% endif %}
+
+            <a href="{{ cancel_url }}" class="btn default" role="button">{{ _gettext('Cancel') }}</a>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            {% if refuse %}
+              <input type="submit" class="btn red-pink" value="{{ refuse[0] }}" name="{{ refuse[1] }}" onclick="javascript:if(confirm('完成以后不能再修改，是否确定?')){return true;}return false;" />
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </form>
+  {% endblock %}
+  

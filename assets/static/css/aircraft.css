@@ -1,0 +1,15 @@
+  .tab-pane .col-md-4{padding-right: 0; overflow: auto;height: 530px;color: #737373;}
+  .tab-pane .col-md-8{padding-left: 0;border-left: 5px solid #dce0e2;height: 530px;overflow: auto;}
+  .tab-pane .row{border: 1px solid #e5e5e5;}
+  .col-md-8 .top{padding-top: 5px;overflow: auto}
+  .col-md-8 .bottom{overflow: auto;padding-top: 5px}
+  .top table td{height:27px; font-size: 15px; padding-left: 7px}
+  .bottom table td{font-size: 15px; padding-left: 7px}
+  .mx_basic{list-style:none;height:240px;}
+  .mxf{list-style: none; margin-top:15px;}
+  .mx_basic li,.mxf li{height:24px; line-height: 24px}
+  .between{background: rgb(220, 224, 226);padding: 3px}
+  .profile-text{margin-left: 30px;}
+  .boundedId{display: none}
+  a{text-decoration:none}
+  a:hover{ text-decoration:none}

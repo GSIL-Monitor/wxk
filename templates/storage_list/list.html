@@ -1,0 +1,53 @@
+{% extends 'list.html' %}
+
+{% block head %}
+{{super()}}
+<style type="text/css">
+.table-scrollable table tbody td {
+    min-width: 80px;
+}
+</style>
+{% endblock %}
+
+{% block model_menu_actions %}
+{{ super() }}
+<div class="actions">
+  {% if admin_view.can_loan %}
+  <a href="#" onclick="multiClick('loan', getStorageUrl)" class="btn btn-default btn-sm">
+    <i class="fa fa-plus"></i>借出申请单
+  </a>
+  {% endif %}
+
+  {% if admin_view.can_assemble %}
+  <a href="#" onclick="multiClick('assembleapplication', getStorageUrl)" class="btn btn-default btn-sm">
+    <i class="fa fa-plus"></i>装机申请单
+  </a>
+  {% endif %}
+
+  {% if admin_view.can_scrap %}
+  <a href="#" onclick="multiClick('scrap', getStorageUrl)" class="btn btn-default btn-sm">
+    <i class="fa fa-plus"></i>报废单
+  </a>
+  {% endif %}
+
+  {% if admin_view.can_repair %}
+  <a href="#" onclick="multiClick('repair', getStorageUrl)" class="btn btn-default btn-sm">
+    <i class="fa fa-plus"></i>送修申请
+  </a>
+  {% endif %}
+  {% if admin_view.can_borrowing_return %}
+  <a href="#" onclick="multiClick('borrowing_return', getStorageUrl)" class="btn btn-default btn-sm">
+    <i class="fa fa-plus"></i>借入归还
+  </a>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block tail %}
+{{ super() }}
+<script>
+  function getStorageUrl() {
+    return "{{ get_url('airmaterialstoragelist.multi_checkbox_redirect', url=return_url) }}"
+  }
+</script>
+{% endblock %}

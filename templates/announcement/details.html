@@ -1,0 +1,48 @@
+{% extends 'details.html' %}
+
+{% block details_search %}
+{% endblock %}
+
+{% block details_table %}
+<div class="row">
+  <div class="col-md-1">
+    <div class="text-center"><h2>标题:</h2></div>
+  </div>
+  <div class="col-md-10 text-center">
+    <h2>{{ get_value(model, 'title') }}</h2>
+  </div>
+  <div class="col-md-1"></div>
+</div>
+<div class="row">
+  <div class="col-md-1">
+      <div class="text-center"><h2>内容:</h2></div>
+  </div>
+  <div class="col-md-10 h4 well">
+    {% if get_value(model, 'content') %}
+      {% set lines = get_value(model, 'content').split('\r\n')%}
+      {% for line in lines%}
+        <p>{{ line }}</p>
+      {% endfor %}
+    {% endif%}
+  </div>
+  <div class="col-md-1"></div>
+</div>
+{% if model.status == '已发送' %}
+<div class="row">
+  <div class="col-md-3 col-md-offset-2">
+    <p><h4>发送时间: {{ get_value(model, 'sendTime')|uniform_datetime_to_day }}</p></h4>
+  </div>
+  <div class="col-md-3" >
+     <p><h4>发送人: {{ get_value(model, 'sendUser') }}</p></h4>
+  </div>
+</div>
+{% endif %}
+<hr>
+<div class="row">
+  <div class="col-md-3 col-md-offset-3">
+    <a href="{{ url_for('.index_view') }}" class="btn btn-success" role="button">
+      <i class="fa fa-level-up">返回</i>
+    </a>
+  </div>
+</div>
+{% endblock %}

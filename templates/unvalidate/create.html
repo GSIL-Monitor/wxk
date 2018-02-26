@@ -1,0 +1,30 @@
+{% extends 'create.html' %}
+
+{% block tail %}
+{{ super() }}
+<script type="text/javascript">
+  $(document).on('click', "input.btn-circle", function(){
+    $(this).attr('disabled','disabled')
+    $(".admin-form").submit()
+  })
+</script>
+{% if inline_table %}
+<script src="{{ url_for('static', filename='js/handsontable.min.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('static', filename=extra_table_js) }}" type="text/javascript"></script>
+<script type="text/javascript">
+    {{ amurl() }}
+    var columns = eval('{{ table_columns|safe }}');
+    var datas = eval('{{ table_datas|safe }}');
+    $(function() {
+        inLineTable.init({
+            table_datas: datas,
+            table_columns: columns,
+        });
+        $('form').append($("#tabletools"));
+        $(".form-actions").insertAfter($("#tabletools"));
+
+    });
+</script>
+{% endif %}
+{% endblock %}
+

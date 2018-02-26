@@ -1,0 +1,38 @@
+{% extends 'list.html' %}
+
+{% block page_body %}
+  <div class="table-responsive flip-scroll">
+    <table class="table table-bordered table-striped table-condensed flip-content">
+      <thead>
+        <tr>
+          {% block theme %}
+          {% set colspan = 2 * export_columns | length %}
+          <th class="tag" colspan="{{ colspan }}" align="right" style="text-align: center; font-size: 20px; line-height: 35px; height:35px">
+            {{ admin_view.name }}
+          </th>
+          {% endblock %}
+        </tr>
+        <tr>
+          {% for item in export_columns %}
+            <td colspan="2">
+              {{ item[1] }}
+            </td>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for model in models %}
+        <tr>
+            {% for item in export_columns %}
+              <td colspan="2">
+                {{ get_export_value(model, item[0]) }}
+              </td>
+            {% endfor %}
+        </tr>
+          {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}

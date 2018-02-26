@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 from .tranlate_column import column_labels
 from modules.forms.as350.scheduled_mx_check import ScheduledMxCheckForm
+from ..title import GeneralScheduledTitle
 
 
 def ScheduledMxCheck():
@@ -11,11 +12,10 @@ def ScheduledMxCheck():
         '_api_url': '/v1/mxp/as350/scheduled-mx-check/',
         'column_list': [
             'id', 'source', 'environmentCategory', 'ataCode',
-            'rii', 'forceExec', 'description', 'interval',
-            'relateDoc', 'remark', 'accessory', 'aircraftsSers', 'reference'
+            'description', 'remark', 'aircraftsSers', 'reference'
         ],
         'column_labels': column_labels,
         'form': ScheduledMxCheckForm,
-        'title': '定期维修检查',
+        'title': GeneralScheduledTitle,
         'coll_name': 'scheduled_mx_check_as350',
     }

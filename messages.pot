@@ -1,0 +1,76 @@
+# Translations template for PROJECT.
+# Copyright (C) 2017 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2017-09-07 13:32+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.4.0\n"
+
+#: modules/views/custom.py:491
+#: modules/views/production/company_day_record.py:249
+msgid "Record was successfully saved."
+msgstr ""
+
+#: modules/views/mongo_custom_view.py:141
+#: modules/views/production/routine_work.py:269
+#, python-format
+msgid "Failed to create record. %(error)s"
+msgstr ""
+
+#: modules/views/mongo_custom_view.py:158
+#, python-format
+msgid "Failed to update record. %(error)s"
+msgstr ""
+
+#: modules/views/basic_data/pesticide.py:60
+#: modules/views/mongo_custom_view.py:171
+#, python-format
+msgid "Failed to delete record. %(error)s"
+msgstr ""
+
+#: modules/views/aircraft/aircraft.py:237
+#: modules/views/mongo_custom_view.py:272
+#: modules/views/production/company_day_record.py:237
+#: modules/views/production/company_day_record.py:292
+msgid "Record does not exist."
+msgstr ""
+
+#: modules/views/mongo_custom_view.py:277
+msgid "Record was successfully deleted."
+msgstr ""
+
+#: modules/views/basic_data/pesticide.py:52
+msgid "该农药在使用中，请先在配方中删除该农药。"
+msgstr ""
+
+#: modules/views/production/company_day_record.py:206
+msgid "Record was successfully created."
+msgstr ""
+
+#: util/mongo_filter.py:21
+msgid "greater equal than"
+msgstr ""
+
+#: util/mongo_filter.py:34
+msgid "smaller equal than"
+msgstr ""
+
+#: util/fields/select.py:121 util/fields/select.py:225
+msgid "Not a valid choice"
+msgstr ""
+
+#: util/fields/select.py:212
+msgid "Invalid Choice: could not coerce"
+msgstr ""
+

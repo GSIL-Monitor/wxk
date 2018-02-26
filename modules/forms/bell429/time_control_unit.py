@@ -1,10 +1,10 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
-from flask_admin.model.fields import InlineFormField, InlineFieldList
+from flask_admin.model.fields import InlineFormField
 from wtforms import form, fields
 
-from ..commom import RelateDocForm, AccessoryForm, interval_types
+from ..commom import RelateDocForm, AccessoryFileForm, IntervalDescForm
 
 
 class TimeControlUnitForm(form.Form):
@@ -12,10 +12,9 @@ class TimeControlUnitForm(form.Form):
     ataCode = fields.IntegerField('ATA章节号')
     name = fields.StringField('部件名')
     pn = fields.StringField('Pn件号')
-    description = fields.StringField('描述信息')
-    interval = InlineFieldList(InlineFormField(interval_types('bell429')),
-                               label='间隔信息', min_entries=1)
+    description = fields.StringField('维修描述')
+    interval = InlineFormField(IntervalDescForm, '间隔类型')
     relateDoc = InlineFormField(RelateDocForm, '相关文件')
     remark = fields.StringField('备注')
-    accessory = InlineFormField(AccessoryForm, '附件信息')
+    accessory = InlineFormField(AccessoryFileForm, '附件')
     etag = fields.HiddenField('etag')

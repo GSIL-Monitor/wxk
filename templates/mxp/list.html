@@ -3,14 +3,51 @@
 {% import 'admin/model/row_actions.html' as row_actions with context %}
 {% import './lib.html' as custom_lib with context %}
 
+{% block head %}
+{{super()}}
+<style>
+  div.dataTables_paginate {
+    float: right;
+    margin: 0;
+  }
+
+  .table .btn.btn-group-item {
+    margin-right: 0px;
+  }
+
+  .table .btn-group.btn-group-xs .btn {
+    padding: 1px 5px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+  }
+
+  .table .btn-group.btn-group-xs .btn:last-child:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  {% if data %}
+  .table {
+    table-layout: fixed;
+  }
+  {% endif %}
+  .col-description, .col-remark .col-pn .col-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+</style>
+{% endblock %}
+
 {% block body %}
 <div class="col-md-12">
+  <div class="row">
     <div class="portlet light">
         <div class="portlet-title">
             <div class="caption">
                 <i class="icon-book-open font-green-sharp"></i>
                 <span class="caption-subject font-green-sharp bold uppercase">
-                    {{ name }} - 维修方案
+                    {{ modelName }} - 维修方案
                 </span>
             </div>
             <div class="tools">
@@ -22,25 +59,29 @@
         </div>
         <div class="portlet-body">
           <div class="row">
-            <div class="col-md-4 profile-userpic">
-              <img src="{{ url_for('static', filename='img/profile_user.jpg') }}" class="img-responsive">
+            <!-- <div class="col-md-4 profile-userpic">
+                 <img src="{{ url_for('static', filename=img) }}" class="img-responsive">
+                 </div> -->
+            <div class="col-md-4">
+              <div class="col-md-1"></div>
+              <span class="profile-desc-title">制造商: </span>
+              <div class="col-md-1"></div>
+              <span class="profile-desc-text">{{typeManufacturer}}</span>
             </div>
             <div class="col-md-4">
-              <h4 class="profile-desc-title">制造商</h4>
-              <span class="profile-desc-text">海丰通航科技有限公司</span>
-              <h4 class="profile-desc-title">上线时间</h4>
-              <span class="profile-desc-text">2015-08-21</span>
+              <span class="profile-desc-title">上线时间: </span>
+              <span class="profile-desc-text">{{onlineTime}}</span>
             </div>
             <div class="col-md-4">
-              <h4 class="profile-desc-title">关联状态</h4>
+              <span class="profile-desc-title">关联状态: </span>
               <span class="profile-desc-text">已经绑定
                 <span class="profile-desc-link">
-                  <a href="#">8</a>
+                  <a href="#">{{boundedCount}}</a>
                 </span> 架飞机
               </span>
-              <h4 class="profile-desc-title">有效期至</h4>
-              <span class="profile-desc-text">2018-08-21</span>
             </div>
+              <!-- <h4 class="profile-desc-title">有效期至</h4>
+                   <span class="profile-desc-text">{{offlineTime}}</span> -->
           </div>
           <div class="profile-usertitle"></div>
           <div class="navbar navbar-default" role="navigation">
@@ -52,9 +93,11 @@
               </li>
               {% endfor %}
             </ul>
-            <form class="navbar-form navbar-left" role="search">
+            <form class="navbar-form navbar-left" role="search" 
+                  action="{{get_url('.index_view')}}" method="GET">
               <div class="form-group">
-                 <input type="text" class="form-control" placeholder="Search">
+                 <input type="text" class="form-control" placeholder="搜索" name="search">
+                 <input type="text" value="{{sub}}" name="sub" hidden="hidden">
               </div>
               <button type="submit" class="btn blue">搜索</button>
             </form>
@@ -72,22 +115,32 @@
     </div>
 
     {# 增加模态框, 没有使用flask-admin的lib实现 #}
-    <div class="modal fade" id="fa_modal_window" tabindex="-1" role="dialog" aria-labelledby="fa_modal_label">
+    <div class="modal fade" id="fa_modal_window" tabindex="-1" role="dialog" aria-labelledby="fa_modal_label" data-focus-on="input:first" data-backdrop="static">
       <div class="modal-dialog modal-lg" role="document">
       {# bootstrap version > 3.1.0 required for this to work #}
         <div class="modal-content">
         </div>
       </div>
     </div>
+
+    <div class="modal fade modal-scroll" id="rd_modal_window" tabindex="-1" role="dialog"  aria-hidden="true" style="top: 150px" data-backdrop="static">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
 
 {% block tail %}
+{{ super() }}
 <script src="{{ url_for('static', filename='js/highlight_selected.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='js/addhover_mxp.js') }}" type="text/javascript"></script>
 <script>
  $(function() {
-   Metronic.init();
-   Layout.init();
    //重构分页url
    $(document).on('click','.sub_url',function(){
        //提取当前选中子视图
@@ -97,7 +150,28 @@
        }else{
            $(this).attr('href',$(this).attr('href')+'?sub='+sub_action)
        }
-   })
+   });
+
+  // 编辑和查看按钮，增加额外的一个时间戳用于解决ie的bug
+  $('a.btn').click(function(e) {
+     var cur = new Date();
+     e.target.href = e.target.href + '&stamp=' + cur.getTime();
   });
+  });
+</script>
+<script type="text/javascript">
+  function getSub(){
+    var sub = '{{ sub }}';
+    if(sub === ''){
+      sub= "scheduled"
+    }
+    return sub;
+  }
+  function getUniqueUrl(){
+    return "{{ get_url('.unique_test') }}";
+  }
+  function getUniqueValueURL(){
+    return "{{ get_url('.unique_value') }}";
+  }
 </script>
 {% endblock %}

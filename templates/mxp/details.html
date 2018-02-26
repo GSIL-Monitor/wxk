@@ -1,0 +1,43 @@
+{% import 'admin/static.html' as admin_static with context%}
+{% import 'admin/lib.html' as lib with context %}
+
+{# store the jinja2 context for form_rules rendering logic #}
+{% set render_ctx = h.resolve_ctx() %}
+
+{% block body %}
+  <link href="{{ url_for('static', filename='css/mxp.css') }}" rel="stylesheet">
+
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"></span></button>
+    {% block header_text %}
+      <h3>{{ _gettext('查看记录') }}{{SS}}</h3>
+    {% endblock %}
+  </div>
+  <div class="modal-body">
+    {% block edit_form %}
+    {% call lib.form_tag(action=None) %}
+      {{ lib.render_form_fields(form, form_opts=form_opts) }}
+      <hr>
+      <div class="form-group">
+        <div class="col-md-offset-5 col-md-10">
+          <a href="{{ return_url }}" class="btn btn-success" role="button" data-dismiss="modal">{{ _gettext('返回') }}</a>
+        </div>
+      </div>
+    {% endcall %}
+    {% endblock %}
+  </div>
+{% endblock %}
+
+{% block tail %}
+  <script src="{{ admin_static.url(filename='admin/js/bs3_modal.js', v='1.0.0') }}"></script>
+  <script src="{{ url_for('static', filename='js/interval.js') }}" type="text/javascript">
+  </script>
+  <script src="{{ url_for('static', filename='js/start_tracking.js') }}" type="text/javascript">
+  </script>
+  <script type="text/javascript">
+    $('input[class="btn green fileinput-button"]').remove();
+    $('a[name="relateDoc-relate"]').remove();
+    $('input[name!="search"],select').attr('disabled',true);
+    $('input[type=submit][value="确定"]').removeAttr('disabled');
+  </script>
+{% endblock %}

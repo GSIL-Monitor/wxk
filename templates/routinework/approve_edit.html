@@ -1,0 +1,32 @@
+{% extends './approve_edit.html' %}
+
+{% block head %}
+  {{ super() }}
+  <style>
+    .col-md-10 div.datepicker {
+        z-index: 1005 !important;
+    }
+
+    #rd_modal_window {
+        z-index: 30000 !important;
+    }
+  </style>
+{% endblock %}
+
+{% block create_form scoped %}
+  <form action="{{ action or '' }}" method="POST" role="form" class="admin-form form-horizontal form-bordered form-row-stripped" enctype="multipart/form-data">
+    <div class="form-body">
+      {{  lib.render_form_fields(form, form_opts=form_opts) }}
+    </div>
+    <div class="form-actions">
+      {{ local_lib.render_actions_buttons(agreed, refuse, return_url) }}
+    </div>
+    <input type="hidden" name="edit" value="保存">
+  </form>
+  <div class="modal fade modal-scroll" id="rd_modal_window" tabindex="-1" role="dialog" aria-hidden="true" style="top: 150px" data-backdrop="static">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      </div>
+    </div>
+  </div>
+{% endblock %}

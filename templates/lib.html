@@ -2,6 +2,111 @@
 {% import 'admin/layout.html' as layout with context %}
 {% import './operations.html' as custom_op with context %}
 
+{% macro extra() %}
+  {% if admin_view.can_create and admin_view.can_extra %}
+  <input name="_add_another" type="submit" class="btn btn-default" value="{{ _gettext('Save and Add Another') }}" />
+  {% endif %}
+  {% if admin_view.can_edit and admin_view.can_extra %}
+  <input name="_continue_editing" type="submit" class="btn btn-default" value="{{ _gettext('Save and Continue Editing') }}" />
+
+  {% endif %}
+{% endmacro %}
+
+
+{% macro render_field(form, field, widgth, kwargs={}, caller=None) %}
+  {% set direct_error = h.is_field_error(field.errors) %}
+  <div class="form-group{{ ' has-error' if direct_error else '' }}">
+    <label for="{{ field.id }}" class="col-md-{{widgth}} control-label">{{ field.label.text }}
+        {% if h.is_required_form_field(field) %}
+          <strong style="color: red">&#42;</strong>
+        {%- else -%}
+          &nbsp;
+        {%- endif %}
+    </label>
+    <div class="{{ kwargs.get('column_class', 'col-md-8') }}">
+      {% set _dummy = kwargs.setdefault('class', 'form-control') %}
+      {{ field(**kwargs)|safe }}
+      {% if field.description %}
+      <p class="help-block">{{ field.description|safe }}</p>
+      {% endif %}
+      {% if direct_error %}
+        <ul class="help-block input-errors">
+        {% for e in field.errors if e is string %}
+          <li>{{ e }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+    {% if caller %}
+      {{ caller(form, field, direct_error, kwargs) }}
+    {% endif %}
+  </div>
+{% endmacro %}
+
+
+{% macro render_form_fields(form, widgth, one_line_columns,  form_opts=None) %}
+    {% if form.hidden_tag is defined %}
+        {{ form.hidden_tag() }}
+    {% else %}
+        {% if csrf_token %}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        {% endif %}
+        {% for f in form if f.widget.input_type == 'hidden' %}
+            {{ f }}
+        {% endfor %}
+    {% endif %}
+
+    {% if form_opts and form_opts.form_rules %}
+        {% for r in form_opts.form_rules %}
+            {{ r(form, form_opts=form_opts) }}
+        {% endfor %}
+    {% else %}
+        {% set form_list = form |list %}
+        {% set index = 0 %}
+        {% for x in range(0, form_list |length, 2) %}
+          <div class="row">
+            {% if x < form | list |length %}
+              {% if form_list[x+index].label.field_id  not in one_line_columns %}
+                <div class="col-md-6">
+                {% set f = form_list[x] if  'input_type' not in form_list[x].widget.__dir__ or form_list[x].widget.input_type != 'hidden' %}
+                  {% if form_opts %}
+                    {% set kwargs = form_opts.widget_args.get(f.short_name, {}) %}
+                  {% else %}
+                    {% set kwargs = {} %}
+                  {% endif %}
+                  {{ render_field(form, f, widgth, kwargs) }}
+                </div>
+              {% endif %}
+            {% endif %}
+
+            {% if x + 1 < form | list |length %}
+              {% if form_list[x+1+index].label.field_id not in one_line_columns %} 
+                <div class="col-md-6">            
+                {% set f = form_list[x+1+index] if form_list[x+1].widget.input_type != 'hidden' %}
+                  {% if form_opts %}
+                    {% set kwargs = form_opts.widget_args.get(f.short_name, {}) %}
+                  {% else %}
+                    {% set kwargs = {} %}
+                  {% endif %}
+                  {{ render_field(form, f, widgth, kwargs) }}
+                </div>
+              {% endif %} 
+            {% endif %}
+            </div>
+        {% endfor %}
+        {% for f in form if f.label.field_id in one_line_columns and f.widget.input_type != 'hidden' %}
+          {% if form_opts %}
+            {% set kwargs = form_opts.widget_args.get(f.short_name, {}) %}
+          {% else %}
+            {% set kwargs = {} %}
+          {% endif %}
+          {{ render_field(form, f, 2, kwargs) }}
+        {% endfor %}
+
+    {% endif %}
+{% endmacro %}
+
+
 {% macro render_custom_form_buttons(cancel_url, extra=None, is_modal=False) %}
 <div class="row">
   <div class="col-md-offset-3 col-md-9">
@@ -17,6 +122,33 @@
 </div>
 {% endmacro %}
 
+{% macro render_actions_buttons(agreed, refuse, cancel_url) %}
+<div class="row">
+  <div class="col-md-offset-4 col-md-9">
+    {% if agreed %}
+    <input type="submit" class="btn btn-primary" value="{{ agreed[0] }}" name="{{ agreed[1] }}" />
+    {% endif %}
+
+    {% if refuse %}
+    <input type="submit" class="btn red-pink" value="{{ refuse[0] }}" name="{{ refuse[1] }}" />
+    {% endif %}
+
+    <a href="{{ cancel_url }}" class="btn default" role="button">{{ _gettext('Cancel') }}</a>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro render_custom_form_two_line(form, cancel_url, one_line_columns, extra=None, form_opts=None, action=None, is_modal=False, widgth=4) %}
+<form action="{{ action or '' }}" method="POST" role="form" class="admin-form form-horizontal form-bordered form-row-stripped" enctype="multipart/form-data">
+  <div class="form-body">
+    {{ render_form_fields(form,widgth=widgth,form_opts=form_opts, one_line_columns=one_line_columns) }}
+  </div>
+  <div class="form-actions">
+    {{ render_custom_form_buttons(cancel_url, extra, is_modal) }}
+  </div>
+</form>
+{% endmacro %}
+
 {% macro render_custom_form(form, cancel_url, extra=None, form_opts=None, action=None, is_modal=False) %}
 <form action="{{ action or '' }}" method="POST" role="form" class="admin-form form-horizontal form-bordered form-row-stripped" enctype="multipart/form-data">
   <div class="form-body">
@@ -27,6 +159,8 @@
   </div>
 </form>
 {% endmacro %}
+
+
 
 {% macro filter_form() %}
 <form id="filter_form" method="GET" action="{{ return_url }}">
@@ -136,29 +270,28 @@
 <div id='popup'>
   <!-- 模态框（Modal） -->
   <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
+    <div class="modal-dialog" >
       <form action="" method="post" id='popForm'>
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="background-image: none !important">
               &times;
             </button>
-            <h4 class="modal-title" id="myModalLabel"></h4>
+            <h4 class="modal-title" id="ModalLabel"></h4>
           </div>
-          <div class="modal-body" id="myModalText" style="display: none"></div>
+          <div class="modal-body" id="ModalText" style="display: none"></div>
           <div class="modal-body" id="annotation" style="display: none">
             <label for="" class="col-md-2" style="margin-top: 6px !important;">审核意见</label>
             <div class="form-group">
               <div class="col-md-10">
-                  <input type="text" class="form-control">
+                  <input type="text" class="form-control" name="suggestion">
               </div>
             </div>
             <div style="clear:both"></div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="btn-primary">
-              确认
-            </button>
+            <input type="submit" class="btn btn-primary" id="btn-primary" value="确定">
+            </input>
             <button type="button" class="btn btn-default" data-dismiss="modal">取消
             </button>
           </div>
@@ -176,28 +309,28 @@
     <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
     <i class="icon-bell"></i>
     <span class="badge badge-success">
-    {{ notifies|length }} </span>
+      {% set count = notifies|length %}
+    {{ count }} </span>
     </a>
     <ul class="dropdown-menu">
       <li class="external">
-        <h3><span class="bold">12 pending</span> notifications</h3>
-        <a href="/admin/notice">view all</a>
+        <h3><span class="bold">{{ count }} 封未读</span>的通知</h3>
+        <a href="{{ url_for('notice.details_view') }}">查看全部</a>
       </li>
       <li>
         <div class="slimScrollDiv"><ul class="dropdown-menu-list scroller" data-handle-color="#637283" data-initialized="1">
         {% for x in notifies %}
+          {% if loop.index <= 4 %}
           <li>
-            <a href="/admin/notice">
-            <span class="time">
-            {{ x.pubTime|uniform_datetime_to_day }}
-            </span>
+            <a href="{{ url_for('notice.details_view', id=x.id) }}">
             <span class="details">
             <span class="label label-sm label-icon label-success">
-            <i class="fa fa-plus"></i>
+            <i class="fa fa-envelope"></i>
             </span>
             {{ x.title }} </span>
             </a>
           </li>
+          {% endif %}
          {% endfor %}
         </ul><div class="slimScrollBar" style="background: rgb(99, 114, 131); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 121.359px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(234, 234, 234); opacity: 0.2; z-index: 90; right: 1px;"></div></div>
       </li>
@@ -291,7 +424,7 @@
         {% endfor %}
       </tbody>
     </table>
-    </div>
+</div>
 
     <div class="row">
       <div class="col-md-5 col-sm-12"></div>
@@ -338,8 +471,8 @@
         <a class="sub_url" href="{{ generator(0) }}">&laquo;</a>
     </li>
     {% else %}
-    <li class="disabled">
-        <a href="javascript:void(0)">&laquo;</a>
+    <li class="">
+        <a class="sub_url" href="{{ generator(p) }}">&laquo;</a>
     </li>
     {% endif %}
     {% if page > 0 %}
@@ -378,10 +511,19 @@
         <a class="sub_url" href="{{ generator(pages - 1) }}">&raquo;</a>
     </li>
     {% else %}
-    <li class="disabled">
-        <a href="javascript:void(0)">&raquo;</a>
+    <li class="">
+        <a class="sub_url" href="{{ generator(pages - 1) }}">&raquo;</a>
     </li>
     {% endif %}
 </ul>
 {% endif %}
 {%- endmacro %}
+
+
+{% macro timetostr(model, column) %}
+  {{model[column] | uniform_datetime_to_str('%Y-%m-%d %H:%M:%S')}}
+{% endmacro %}
+
+{% macro timetodate(model, column) %}
+  {{model[column] | uniform_datetime_to_str('%Y-%m-%d')}}
+{% endmacro %}

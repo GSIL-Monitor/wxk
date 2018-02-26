@@ -46,6 +46,3 @@ class UnroutineWork(Model):
     bxTime = schema.Column(types.DateTime)
     bxr = schema.Column(types.String(255))
     wcqx = schema.Column(types.DateTime)
-
-    createTime = schema.Column(types.DateTime)
-    updateTime = schema.Column(types.DateTime)

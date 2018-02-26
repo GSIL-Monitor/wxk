@@ -1,0 +1,174 @@
+{% extends './layout.html' %}
+
+{% block body %}
+<style>
+    .table-editable {
+      position: relative;
+      .glyphicon {
+        font-size: 20px;
+      }
+    }
+    .table-remove {
+      color: #700;
+      cursor: pointer;
+      &:hover {
+        color: #f00;
+      }
+    }
+
+    .table-up, .table-down {
+      color: #007;
+      cursor: pointer;
+      &:hover {
+        color: #00f;
+      }
+    }
+
+    .table-add {
+      color: #070;
+      cursor: pointer;
+      &:hover {
+        color: #0b0;
+      }
+    }
+    .approve{width: 58px; margin:0px 0px 20px 20px;}
+    th,td{border: 1px solid #ddd;padding:0px !important; height:20px !important; line-height: 30px !important;}
+</style>
+
+<div class="profile-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light" style="padding: 0">
+                <div class="portlet-body" style="padding: 0">
+                    <div class="tab-content">
+                        <!-- PRIVACY SETTINGS TAB -->
+                            <div class="portlet box green">
+                                <div class="portlet-title">
+                                    <div class="caption">
+                                        飞行日志
+                                    </div>
+                                </div>
+                                <div class="portlet-body">
+                                    <div class="container" style="width:initial;">
+                                      <div id="table" class="table-editable">
+                                        <div style="margin: 10px 0px;">
+                                          <input type="text" value="飞行日期" style="width: 58px;">
+                                          <input type="text" readonly="readonly" style="width: 58px; margin-left:20px;background: #eee">
+                                        </div>
+                                        <div style="margin: 10px 0px;">
+                                          <input type="text" value="记录人" style="width: 58px;">
+                                          <input type="text" readonly="readonly" style="width: 58px; margin-left:19px;background: #eee">
+                                          <input type="text" value="记录时间" style="margin-left: 20px;width: 58px;">
+                                          <input type="text" readonly="readonly" style="width: 58px; margin-left:19px;background: #eee">
+                                          <input type="text" value="修改人" style="width: 58px; margin-left:20px">
+                                          <input type="text" readonly="readonly" style="width: 58px; margin-left:19px;background: #eee;    margin-left: 20px;">
+                                        </div>
+                                        <div style="margin: 10px 0px;">
+                                          <input type="text" value="修改时间" style="width: 58px; margin:0px 0px 20px 0">
+                                          <input type="text" readonly="readonly" style="width: 58px; margin-left:19px;background: #eee">
+                                          <input type="text" value="提交人" class="approve">
+                                          <input type="text" readonly="readonly" style="width: 58px; margin-left:19px;background: #eee">
+                                          <input type="text" value="提交时间" class="approve">
+                                          <input type="text" readonly="readonly" style="width: 58px; margin-left:19px;background: #eee">
+                                          <input type="button" value="增行" class="table-add glyphicon glyphicon-plus" style="font-size: 13px;margin-left: 30px; color: #000;">
+                                          <!-- <input type="button" value="删行" class="table-add glyphicon glyphicon-plus" style="font-size: 13px;margin-left: 30px; color: #000;"> -->
+                                        </div>
+                                        <table class="table">
+                                              <tr>
+                                                <th>
+                                                  <input type="checkbox">
+                                                </th>
+                                                {% for x in form %}
+                                                {% if loop.index == 16 %}
+                                                <th class="between">
+                                                  <span class="glyphicon glyphicon-chevron-left"></span>
+                                                </th>
+                                                {% endif %}
+                                                <th>
+                                                {{ x.label.text }}
+                                                </th>
+                                                {% endfor %}
+                                              </tr>
+                                              {% for row_data in datas -%}
+                                              <tr>
+                                                <td>
+                                                  <input type="checkbox">
+                                                </td>
+                                                {% for x in form -%}
+                                                {% if loop.index == 16 %}
+                                                <td class="between">
+                                                  <span class="table-remove glyphicon glyphicon-remove"></span>
+                                                </td>
+                                                {% endif %}
+                                                {% if row_data[x.name] == 'None' or row_data[x.name] == None %}
+                                                <td contenteditable="true">
+                                                </td>
+                                                {% else %}
+                                                <td contenteditable="true">
+                                                  {{ row_data[x.name] }}
+                                                </td>
+                                                {% endif %}
+                                                {%- endfor %}
+                                              </tr>
+                                              {%- endfor %}
+                                              <!-- This is our clonable table line -->
+                                              <tr class="hide">
+                                                <td>
+                                                  <input type="checkbox">
+                                                </td>
+                                                {% for x in form %}
+                                                {% if loop.index == 16 %}
+                                                <td class="between">
+                                                  <span class="table-remove glyphicon glyphicon-remove"></span>
+                                                </td>
+                                                {% endif %}
+                                                <td contenteditable="true"></td>
+                                                {% endfor %}
+                                              </tr>
+                                            </table>
+                                      </div>
+                                      <input type="hidden" value="{{ get_url('.save_log') }}" id="app_url">
+                                      <div style="margin: 0px auto;    width: 300px;">
+                                        <button id="export-btn" class="btn btn-info">暂存</button>
+                                        <button id="" class="btn btn-default" onclick="{{ get_url('.index_view') }}">取消</button>
+                                        <button id="" class="btn btn-success">提交</button>
+                                      </div>
+                                      <p id="export"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        <!-- END PRIVACY SETTINGS TAB -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block tail %}
+{{ super() }}
+<script>
+  var body = document.body;
+  body.setAttribute('class','page-header-fixed page-sidebar-closed-hide-logo page-sidebar-closed');
+  $('.page-sidebar-menu').attr('class','page-sidebar-menu page-sidebar-menu-closed')
+  $(function(){
+    $("[type='checkbox']").css({'width':'19px','height':'19px'})
+    $(".between").nextAll().hide()
+    $(".between").find('th:first,td:first').show()
+    $('.between:first').click(function(){
+      if($(this).find('span').attr('class').indexOf('glyphicon-chevron-left')>0){
+        $(this).find('span').attr('class','glyphicon glyphicon-chevron-right')
+        $(".between").prevAll().hide()
+        $(".between").nextAll().show()
+        // $(".between").parent().find('th:first,td:first').show()
+      }else{
+        $(this).find('span').attr('class','glyphicon glyphicon-chevron-left')
+        $(".between").nextAll().hide()
+        $(".between").prevAll().show()
+        $(".between").parent().find('th:first,td:first').show()
+      }
+    })
+  })
+</script>
+{% endblock %}

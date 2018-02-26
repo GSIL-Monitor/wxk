@@ -1,161 +1,103 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import copy
 
 
-def scheduled_source(plane_type=None):
-    if not isinstance(plane_type.encode('utf-8'), str):
-        raise ValueError('plane type should be string.')
-
-    basic = [
-        ('AMM', 'AMM'),
-        ('AD/SB', 'AD/SB'),
-        ('EMM', 'EMM'),
-        ('其他', '其他')]
-
-    plane_type = plane_type.lower()
-    if plane_type in ['as350']:
-        basic.insert(-2, ('ALS', 'ALS'))
-    elif plane_type in ['bell206', 'bell407', 'bell429']:
-        basic = [
-            ('MM', 'MM'),
-            ('OMM', 'OMM'),
-            ('MMS', 'MMS'),
-            ('CD', 'CD'),
-            ('AD/SB', 'AD/SB'),
-            ('其他', '其他')]
-    elif plane_type in ['da40d', 'r22', 'r44', 'swz269c1']:
-        pass
-    else:
-        raise ValueError('please check the plane type')
-    return basic
+type_map = {
+    '年': 4,
+    '月': 3,
+    '天': 2
+}
 
 
-def environment_category(plane_type=None):
-    if not isinstance(plane_type.encode('utf-8'), str):
-        raise ValueError('plane type should be string.')
+scheduled_source = [('AMM', 'AMM'),
+                    ('AD/SB', 'AD/SB'),
+                    ('EMM', 'EMM'),
+                    ('其他', '其他')]
 
-    basic = [('正常环境', '正常环境'),
-             ('热带及潮湿环境', '热带及潮湿环境'),
-             ('盐雾环境', '盐雾环境'),
-             ('沙尘和/或灰尘环境', '沙尘和/或灰尘环境'),
-             ('寒冰或极寒天气', '寒冰或极寒天气')]
+as_scheduled_source = copy.deepcopy(scheduled_source)
+as_scheduled_source.insert(-2, ('ALS', 'ALS'))
 
-    if plane_type in ['as350']:
-        pass
-    else:
-        raise ValueError('please check the plane type')
+bell_scheduled_source = [[('MM', 'MM'),
+                          ('OMM', 'OMM'),
+                          ('MMS', 'MMS'),
+                          ('CD', 'CD'),
+                          ('AD/SB', 'AD/SB'),
+                          ('其他', '其他')]]
 
-    return basic
+environment_category = [('正常环境', '正常环境'),
+                        ('热带及潮湿环境', '热带及潮湿环境'),
+                        ('盐雾环境', '盐雾环境'),
+                        ('沙尘和/或灰尘环境', '沙尘和/或灰尘环境'),
+                        ('寒冰或极寒天气', '寒冰或极寒天气')]
 
-
-def parking_category(plane_type=None):
-    if not isinstance(plane_type.encode('utf-8'), str):
-        raise ValueError('plane type should be string')
-
-    basic = [('<1个月', '<1个月'), ('1~6个月', '1~6个月'), ('>6个月', '>6个月')]
-
-    if plane_type in ['as350']:
-        pass
-    else:
-        raise ValueError('please check the plane type')
-
-    return basic
+parking_category = [('<1个月', '<1个月'), ('1~6个月', '1~6个月'), ('>6个月', '>6个月')]
 
 
-def unscheduled_category(plane_type=None):
-    if not isinstance(plane_type.encode('utf-8'), str):
-        raise ValueError('plane type should be string')
-    basic = [('发动机', '发动机'), ('机体', '机体')]
+unscheduled_category = [('发动机', '发动机'), ('机体', '机体')]
 
-    if plane_type in ['as350']:
-        pass
-    elif plane_type in ['bell206', 'bell407', 'bell429']:
-        basic = [
-            ('重着陆', '重着陆'),
-            ('发动机停车或运转时，主旋翼突然停转', '发动机停车或运转时，主旋翼突然停转'),
-            ('发动机停车或运转时，尾桨突然停转', '发动机停车或运转时，尾桨突然停转'),
-            ('主旋翼超速', '主旋翼超速'),
-            ('超扭矩', '超扭矩'),
-            ('压气机失速或喘振', '压气机失速或喘振'),
-            ('雷击后', '雷击后')]
-    elif plane_type in ['da40d']:
-        basic = [('重着陆', '重着陆'), ('螺旋桨撞击', '螺旋桨撞击'),
-                 ('发动机失火', '发动机失火'), ('雷击', '雷击'), ('其他', '其他')]
-    else:
-        raise ValueError('please check the plane type')
+bell_unscheduled_category = [('重着陆', '重着陆'),
+                             ('发动机停车或运转时，主旋翼突然停转',
+                              '发动机停车或运转时，主旋翼突然停转'),
+                             ('发动机停车或运转时，尾桨突然停转',
+                              '发动机停车或运转时，尾桨突然停转'),
+                             ('主旋翼超速', '主旋翼超速'),
+                             ('超扭矩', '超扭矩'),
+                             ('压气机失速或喘振', '压气机失速或喘振'),
+                             ('雷击后', '雷击后')]
 
-    return basic
+da40d_unscheduled_category = [('重着陆', '重着陆'),
+                              ('螺旋桨撞击', '螺旋桨撞击'),
+                              ('发动机失火', '发动机失火'),
+                              ('雷击', '雷击'),
+                              ('其他', '其他')]
 
 
-def flight_line_category(plane_type=None):
-    if not isinstance(plane_type.encode('utf-8'), str):
-        raise ValueError('plane type should be string')
+flight_line_category = [('航前检查', '航前检查'),
+                        ('航后检查', '航后检查'),
+                        ('短停检查', '短停检查')]
 
-    basic = [('航前检查', '航前检查'),
-             ('航后检查', '航后检查'),
-             ('短停检查', '短停检查')]
-
-    if plane_type in ['as350', 'bell206', 'bell407', 'bell429']:
-        pass
-    elif plane_type in ['da40d']:
-        basic.remove(('短停检查', '短停检查'))
-        basic.append(('过站检查', '过站检查'))
-    else:
-        raise ValueError('please check the plane type')
-
-    return basic
+da40d_flight_line_category = copy.deepcopy(flight_line_category)
+da40d_flight_line_category.remove(('短停检查', '短停检查'))
+da40d_flight_line_category.append(('过站检查', '过站检查'))
 
 
-def normal_check_category(plane_type=None):
-    if not isinstance(plane_type.encode('utf-8'), str):
-        raise ValueError('plane type should be string')
-
-    basic = [('航前检查', '航前检查'),
-             ('视情检查', '视情检查'), ('航后检查', '航后检查')]
-
-    if plane_type in ['r22', 'r44', 'swz269c1']:
-        pass
-    else:
-        raise ValueError('please check the plane type')
-
-    return basic
+normal_check_category = [('航前检查', '航前检查'),
+                         ('视情检查', '视情检查'),
+                         ('航后检查', '航后检查')]
 
 
-def special_check_category(plane_type=None):
-    if not isinstance(plane_type.encode('utf-8'), str):
-        raise ValueError('plane type should be string')
+special_check_category = [('尾撬检查', '尾撬检查'),
+                          ('尾桨撞击', '尾桨撞击'),
+                          ('旋翼检查', '旋翼检查'),
+                          ('发动机超速', '旋翼/发动机超速'),
+                          ('硬着陆', '硬着陆'),
+                          ('C020上钢管机架检查', 'C020上钢,管机架检查'),
+                          ('挡风玻璃检查', '挡风玻璃检查'),
+                          ('上、下离合器制动器轴承检查', '上、下离合器制动器轴承检查'),
+                          ('C181下制动器轴承检查', 'C181下制动器轴承检查'),
+                          ('C184上制动器轴承检查', 'C184上制动器轴承检查'),
+                          ('三角皮带检查', '三角皮带检查'),
+                          ('下皮带轮三角皮带磨损形式检查', '下皮带轮三角皮带磨损形式检查')]
 
-    basic = [('尾撬检查', '尾撬检查'),
-             ('尾桨撞击', '尾桨撞击'), ('旋翼检查', '旋翼检查'),
-             ('发动机超速', '旋翼/发动机超速'), ('硬着陆', '硬着陆'),
-             ('C020上钢管机架检查', 'C020上钢,管机架检查'),
-             ('挡风玻璃检查', '挡风玻璃检查'),
-             ('上、下离合器制动器轴承检查', '上、下离合器制动器轴承检查'),
-             ('C181下制动器轴承检查', 'C181下制动器轴承检查'),
-             ('C184上制动器轴承检查', 'C184上制动器轴承检查'),
-             ('三角皮带检查', '三角皮带检查'),
-             ('下皮带轮三角皮带磨损形式检查', '下皮带轮三角皮带磨损形式检查')]
+scheduled_area = [('发动机舱', '发动机舱'),
+                  ('前机身', '前机身'),
+                  ('驾驶舱', '驾驶舱'),
+                  ('中部机身', '中部机身'),
+                  ('后机身', '后机身'),
+                  ('尾部', '尾部'),
+                  ('大翼', '大翼'),
+                  ('总检', '总检')]
 
-    if plane_type in ['r22', 'r44', 'swz269c1']:
-        pass
-    else:
-        raise ValueError('please check the plane type')
+y5b_scheduled_source = [
+                        ('维修大纲', '维修大纲'),
+                        ('适航文件', '适航文件'),
+                        ('发动机维护说明', '发动机维护说明'),
+                        ('发动机使用说明', '发动机使用说明'),
+                        ('螺旋桨使用说明', '螺旋桨使用说明'),
+                        ('维护大纲及发动机维护说明', '维护大纲及发动机维护说明'),
+                        ('履历本', '履历本'),
+                        ('其他', '其他')]
 
-    return basic
-
-
-def scheduled_area(plane_type=None):
-    if not isinstance(plane_type.encode('utf-8'), str):
-        raise ValueError('plane type should be string')
-
-    basic = [('发动机舱', '发动机舱'),
-             ('前机身', '前机身'), ('驾驶舱', '驾驶舱'), ('中部机身', '中部机身'),
-             ('后机身', '后机身'), ('尾部', '尾部'), ('大翼', '大翼'), ('总检', '总检')]
-
-    if plane_type in ['da40d']:
-        pass
-    else:
-        raise ValueError('please check the plane type')
-
-    return basic
+y5b_parking_category = [('停放时每十五天进行一次检查', '停放时每十五天进行一次检查')]

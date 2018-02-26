@@ -2,12 +2,17 @@
 
 from __future__ import unicode_literals
 
+import date_converter
+
+
+def get_username(user):
+    return user.realName or user.nickName or user.username or user.email
+
 
 def format_username(user):
     if not user or not user.is_active:
         raise ValueError('User objects is not valid')
-
-    return user.username or user.email
+    return get_username(user)
 
 
 def province(address):
@@ -55,3 +60,17 @@ def county(address):
         return '市、县级市'
 
     return address['county']
+
+
+def timestamp_to_date(timestamp):
+    if timestamp == 0 or timestamp == -1:
+        return ''
+
+    return date_converter.timestamp_to_string(timestamp, '%Y-%m-%d')
+
+
+def timestamp_to_datetimestamp(timestamp):
+    if timestamp == 0 or timestamp == -1:
+        return ''
+
+    return date_converter.timestamp_to_string(timestamp, '%Y-%m-%d %H:%M:%S')

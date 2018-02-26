@@ -22,7 +22,7 @@ class R22View(MxpBaseView):
         return {
             'scheduled': dict(**ScheduledMxCheck()),
             'life-control': dict(**LifeControlUnit()),
-            'unsheduled-mx-check': dict(**UnscheduledMxCheck()),
+            'unscheduled-mx-check': dict(**UnscheduledMxCheck()),
             'time-control-unit': dict(**TimeControlUnit()),
             'normai-check': dict(**NormalCheck()),
             'special-check': dict(**SpecialCheck())
@@ -31,3 +31,7 @@ class R22View(MxpBaseView):
     @property
     def default_subordinate_view(self):
         return 'scheduled'
+
+    @property
+    def default_image(self):
+        return 'r22.jpg'

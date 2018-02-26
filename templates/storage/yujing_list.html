@@ -1,0 +1,40 @@
+{% extends 'list.html' %}
+{% import 'storage/lib.html' as cont with context%}
+
+{% block model_menu_title %}
+{{ admin_view.name|capitalize }}
+{#{% if count %}[{{count}}]{% endif %}#}
+{% endblock %}
+
+{% block model_menu_actions %}
+<div class="actions">
+
+  <!-- TODO: 弹出模态对话框 -->
+  <a href="{{ get_url('.index_view', url=return_url, category='history') }}" class="btn btn-default btn-sm">
+  检查记录
+  </a>
+
+</div>
+{% endblock %}}
+
+
+  {% block model_list_table %}
+    {% if filters %}
+    <div class="row">
+      <div class="col-md-12">
+      {{ ctx.filter_form() }}
+      </div>
+    </div>
+    {% endif %}
+
+    {% set lvs = levels %}
+
+    {{ cont.render_table_with_color(lvs, admin_view, list_columns, data, get_value, list_row_actions, get_pk_value, row_actions, num_pages, page, page_size, pager_url) }}
+<div class="modal fade" id="fa_modal_window" tabindex="-1" role="dialog" aria-labelledby="fa_modal_label" data-focus-on="input:first" data-backdrop="static">
+      <div class="modal-dialog modal-lg" role="document">
+      {# bootstrap version > 3.1.0 required for this to work #}
+        <div class="modal-content">
+        </div>
+      </div>
+    </div>
+  {% endblock %}

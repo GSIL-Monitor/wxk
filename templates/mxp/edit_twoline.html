@@ -1,0 +1,10 @@
+{% extends 'mxp/edit.html' %}
+{% import 'mxp/mxp_two_line.html' as mtl with context %}
+
+{% block edit_form %}
+     {{ mtl.render_form_with_twoLine(form, return_url, extra=None, form_opts=form_opts,
+                        action=url_for('.edit_view', id=request.args.get('id'),
+                        url=return_url, sub=sub, modal=True,
+                        time=time_formatter()), is_modal=True) }}
+{% endblock %}
+

@@ -2,7 +2,6 @@
 
 from __future__ import unicode_literals
 
-from jinja2 import escape
 from wtforms.widgets import HTMLString
 
 
@@ -23,7 +22,8 @@ class AddressInput(object):
         '<select name="%(marker)s-county" class="form-control"></select>'
         '</div>'
         '<div class="col-md-6">'
-        '<input type="text" placeholder="详细地址" name="%(marker)s-detail" value="%(detail)s" class="form-control"/>'
+        '<input type="text" placeholder="详细地址"'
+        'name="%(marker)s-detail" value="%(detail)s" class="form-control"/>'
         '</div>'
         '</div>'
         '</div>'

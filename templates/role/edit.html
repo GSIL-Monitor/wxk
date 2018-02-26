@@ -1,0 +1,16 @@
+{% extends './edit.html' %}
+
+
+{% block create_form scoped %}
+    {{ ctx.render_custom_form(form, return_url, extra(), form_opts=form_opts) }}
+{% endblock %}
+
+
+{% block tail %}
+{{ super() }}
+<script type="text/javascript">
+    var allowed_actions = {{ all_actions|safe }};
+    var model_allowed_perms = {{ model_allowed_perms|safe }};
+</script>
+<script src="{{ url_for('static', filename='js/perms.js') }}" type="text/javascript"></script>
+{% endblock %}

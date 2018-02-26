@@ -1,0 +1,59 @@
+{% extends 'aircraft/layout.html' %}
+{% import 'actions.html' as act with context %}
+{% import 'lib.html' as lib with context %}
+
+{% block content %}
+<style>
+    .table .btn{margin-right:0px;}
+</style>
+<div class="profile-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light" style="padding: 0">
+                <div class="portlet-body" style="padding: 0">
+                    <div class="tab-content">
+                        <!-- PRIVACY SETTINGS TAB -->
+                            <div class="portlet box yellow">
+                                <div class="portlet-title">
+                                    <div class="caption">
+                                        <i class="icon-list"></i>维修日志
+                                    </div>
+                                    <div class="actions">
+                                      {# 维修日志通常不是由用户主动创建的 #}
+                                    </div>
+                                </div>
+                                <!-- 参考table_advanced.html -->
+                                <div class="portlet-body">
+                                    <div class="table-scrollable">
+                                        <table class="table table-hover">
+                                        <tbody>
+                                            {{ custom_lib.render_table(admin_view, list_columns, data, get_value, list_row_actions, get_pk_value, row_actions, num_pages, page, page_size, pager_url) }}
+                                        </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        <!-- END PRIVACY SETTINGS TAB -->
+                    </div>
+                    {# 增加模态框, 没有使用flask-admin的lib实现 #}
+                    <div class="modal fade" id="fa_modal_window" tabindex="-1" role="dialog" aria-labelledby="fa_modal_label">
+                      <div class="modal-dialog modal-lg" role="document">
+                      {# bootstrap version > 3.1.0 required for this to work #}
+                        <div class="modal-content">
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block custom_tail %}
+<script>
+    $(function(){
+        $('.table-scrollable.table-responsive').hide()
+    })
+</script>
+{% endblock %}

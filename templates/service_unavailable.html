@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{{ admin_view.name }}</title>
+<link href="{{ url_for('static', filename='css/error.css') }}" rel="stylesheet" type="text/css">
+<link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+</head>
+<body class="page-404-full-page" style="background: url('/static/img/404bg.png');">
+     <div class="row">
+        <div class="col-md-12 page-404">
+            <div class="details">
+              {% if refresh %}
+                <img src="{{ url_for('static', filename='img/sleep.png') }}" alt="">
+              {% else %}
+                <img src="{{ url_for('static', filename='img/error.png') }}" alt="">
+              {% endif %}
+            </div>
+            <div style=" margin-top: 27px;">
+              {% if refresh %}
+                <a href="/admin"><img src="{{ url_for('static', filename='img/refresh.png') }}" alt=""></a>
+              {% else %}
+                <a href="/admin"><img src="{{ url_for('static', filename='img/backhome.png') }}" alt=""></a>
+              {% endif %}
+            </div>
+        </div>
+     </div>
+ </body>
+</html>

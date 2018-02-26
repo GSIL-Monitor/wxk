@@ -24,6 +24,3 @@ class MalfunctureStatistics(Model):
     statisDesc = schema.Column(types.String(255))
     statisFrom = schema.Column(types.String(255))
     flag = schema.Column(types.String(255))
-
-    createTime = schema.Column(types.DateTime)
-    updateTime = schema.Column(types.DateTime)

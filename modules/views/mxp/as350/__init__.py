@@ -25,7 +25,7 @@ class AS350View(MxpBaseView):
             'life-control': dict(**LifeControlUnit()),
             'flight-line-check': dict(**FlightLineCheck()),
             'po-unit': dict(**POUnit()),
-            'unsheduled-mx-check': dict(**UnscheduledMxCheck()),
+            'unscheduled-mx-check': dict(**UnscheduledMxCheck()),
             'time-control-unit': dict(**TimeControlUnit()),
             'short-long-term-parking': dict(**ShortLongTermParking()),
         }
@@ -33,3 +33,7 @@ class AS350View(MxpBaseView):
     @property
     def default_subordinate_view(self):
         return 'scheduled'
+
+    @property
+    def default_image(self):
+        return 'as350.jpg'

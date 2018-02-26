@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 from sqlalchemy import schema, types
-from sqlalchemy.orm import relationship
 
 from .base import Model
 

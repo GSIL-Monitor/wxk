@@ -91,7 +91,8 @@ class MxpTestCase(unittest.TestCase):
                            url='/admin/{}view/'.format(coll_name),
                            id=test_id)
         test_value['remark'] = 'new {}'.format(test_value['remark'])
-        test_value['etag'] = self.mongodb[coll_name].find_one({'id': 'wcg2000'}).get('etag')
+        test_value['etag'] = self.mongodb[
+            coll_name].find_one({'id': 'wcg2000'}).get('etag')
         rv = self.client.post(edit_url, data=test_value,
                               follow_redirects=True)
         return rv.data

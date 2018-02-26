@@ -1,0 +1,23 @@
+{% extends 'create.html' %}
+
+{% block head %}
+{{ super() }}
+<style>
+  .col-md-10 div.datepicker {
+    z-index: 1005 !important;
+}
+#rd_modal_window {
+    z-index: 30000 !important;
+  }
+</style>
+{% endblock %}
+
+{% block create_form scoped %}
+  {{ ctx.render_custom_form(form, return_url, extra(), form_opts=form_opts) }}
+<div class="modal fade modal-scroll" id="rd_modal_window" tabindex="-1" role="dialog" aria-hidden="true" style="top: 150px" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    </div>
+  </div>
+</div>
+{% endblock %}

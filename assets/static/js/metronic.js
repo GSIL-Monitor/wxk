@@ -669,6 +669,22 @@ var Metronic = function() {
     }
   };
 
+  var handleToastr = function() {
+    toastr.options = {
+      closeButton: true,
+      positionClass: 'toast-top-center',
+      onclick: null,
+      showDuration: '1000',
+      hideDuration: '1000',
+      timeOut: 4000,
+      extendedTimeOut: '1000',
+      showEasing: 'swing',
+      hideEasing: 'linear',
+      showMethod: 'fadeIn',
+      hideMethod: 'fadeOut',
+    };
+  };
+
   //* END:CORE HANDLERS *//
 
   return {
@@ -701,6 +717,7 @@ var Metronic = function() {
 
       // Hacks
       handleFixInputPlaceholderForIE(); //IE8 & IE9 input placeholder issue fix
+      handleToastr();
     },
 
     //main function to initiate core javascript after ajax complete

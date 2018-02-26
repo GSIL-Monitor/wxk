@@ -1,0 +1,9 @@
+{% extends 'mxp/create.html' %}
+{% import 'mxp/mxp_two_line.html' as mtl with context %}
+
+{% block create_form %}
+    {{ mtl.render_form_with_twoLine(form, return_url, extra=None, form_opts=form_opts,
+                action=url_for('.create_view', url=return_url, sub=sub),
+                is_modal=True) }}
+{% endblock %}
+

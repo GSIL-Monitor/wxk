@@ -1,0 +1,9 @@
+.datepicker{
+	padding: 0 !important;
+	width: 84%;
+}
+
+.add-on .btn.default{
+    position: absolute;
+    top: 0px;
+}

@@ -8,39 +8,39 @@
 {% endblock %}
 
 {% block title %}
-{{ "通航云后台管理平台 - 登录" }}
+{{ "徐州农用航空站通航信息化系统" }}
 {% endblock %}
 
 {% block page_body %}
 <div class="logo">
   <a href="#">
-    <img src="/static/img/logo-light.png" alt>
+    <img src="/static/img/login-logo.png" alt style="width: 360px">
   </a>
 </div>
 <div class="content">
   <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form" class="login-form">
-    <h3 class="form-title">Login to your account</h3>
+    <h3 class="form-title">登入账户</h3>
     {{ login_user_form.hidden_tag() }}
-    {{ render_field_with_errors(login_user_form.email, 'fa fa-user', 'Email Address') }}
-    {{ render_field_with_errors(login_user_form.password, 'fa fa-lock', 'Password') }}
+    {{ render_field_with_errors(login_user_form.email, 'fa fa-user', '邮箱或用户名') }}
+    {{ render_field_with_errors(login_user_form.password, 'fa fa-lock', '密码') }}
     {{ render_field(login_user_form.next) }}
     <div class="form-actions">
       {{ render_remember_field(login_user_form.remember) }}
-      {{ login_user_form.submit(class_="btn blue pull-right") }}
+      {{ login_user_form.submit(class_="btn blue pull-right", value="登录") }}
     </div>
 
-    <div class="forget-password">
+    <!-- <div class="forget-password">
 			<h4>忘记密码 ?</h4>
 			<p>
 				 无需担心, 点击 <a href="javascript:;" id="forget-password">
 				这里 </a>
 				轻松重置。
 			</p>
-		</div>
+		</div> -->
   </form>
 </div>
 <div class="copyright">
-	 2016 © 海丰通航科技有限公司 - 通航云管理平台
+	 2016 - 2017 © 海丰通航科技有限公司
 </div>
 {% endblock %}
 
@@ -50,10 +50,10 @@
 <script>
  jQuery(document).ready(function() {
    $.backstretch([
-     "/static/img/bg/1.jpg",
-     "/static/img/bg/2.jpg",
-     "/static/img/bg/3.jpg",
-     "/static/img/bg/4.jpg"
+     "/static/img/bg/1.png",
+     // "/static/img/bg/2.jpg",
+     // "/static/img/bg/3.jpg",
+     // "/static/img/bg/4.jpg"
    ], {
      fade: 1000,
      duration: 8000

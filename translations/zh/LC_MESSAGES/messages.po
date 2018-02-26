@@ -1,0 +1,80 @@
+# Chinese translations for PROJECT.
+# Copyright (C) 2017 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2017-09-07 13:32+0800\n"
+"PO-Revision-Date: 2017-08-03 11:06+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_Hans_CN\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.4.0\n"
+
+#: modules/views/custom.py:491
+#: modules/views/production/company_day_record.py:249
+msgid "Record was successfully saved."
+msgstr "创建记录成功。"
+
+#: modules/views/mongo_custom_view.py:141
+#: modules/views/production/routine_work.py:269
+#, python-format
+msgid "Failed to create record. %(error)s"
+msgstr "创建记录失败。%(error)s"
+
+#: modules/views/mongo_custom_view.py:158
+#, python-format
+msgid "Failed to update record. %(error)s"
+msgstr "更新记录失败。%(error)s"
+
+#: modules/views/basic_data/pesticide.py:60
+#: modules/views/mongo_custom_view.py:171
+#, python-format
+msgid "Failed to delete record. %(error)s"
+msgstr "删除记录失败。%(error)s"
+
+#: modules/views/aircraft/aircraft.py:237
+#: modules/views/mongo_custom_view.py:272
+#: modules/views/production/company_day_record.py:237
+#: modules/views/production/company_day_record.py:292
+msgid "Record does not exist."
+msgstr "记录不存在。"
+
+#: modules/views/mongo_custom_view.py:277
+msgid "Record was successfully deleted."
+msgstr "记录被成功删除。"
+
+#: modules/views/basic_data/pesticide.py:52
+msgid "该农药在使用中，请先在配方中删除该农药。"
+msgstr ""
+
+#: modules/views/production/company_day_record.py:206
+msgid "Record was successfully created."
+msgstr "创建记录成功。"
+
+#: util/mongo_filter.py:21
+msgid "greater equal than"
+msgstr "大于等于"
+
+#: util/mongo_filter.py:34
+msgid "smaller equal than"
+msgstr "小于等于"
+
+#: util/fields/select.py:121 util/fields/select.py:225
+msgid "Not a valid choice"
+msgstr "不是一个有效的选择项"
+
+#: util/fields/select.py:212
+msgid "Invalid Choice: could not coerce"
+msgstr "无效的选择项"
+
+#~ msgid "请先删除该配方中的农药，再删除该配方。"
+#~ msgstr ""
+

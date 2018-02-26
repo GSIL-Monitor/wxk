@@ -7,26 +7,181 @@
 </a>
 {% endmacro %}
 
+{% macro group_link_post(action, url, icon, color='', label='') %}
+<form action="{{ url }}" class="btn btn-group-item {{ color }}" method="POST" >
+     <button type="submit" class="btn green">
+      <i class="fa {{ icon }}"></i>
+      {{ _gettext(label) }}
+    </button>
+</form>
+{% endmacro %}
+
 {% macro edit_row(action, row_id, row) %}
-{{ group_link(action, get_url('.edit_view', id=row_id, url=return_url), 'fa-edit', 'green', '编辑') }}
+{{ group_link(action, get_url('.edit_view', id=row_id, url=return_url), 'fa-edit', 'yellow', '编辑') }}
+{% endmacro %}
+
+{% macro export_pdf_row(action, row_id, row) %}
+{{ group_link(action, get_url('.pdf_view', id=row_id, url=return_url), 'fa-print', 'green', '打印') }}
+{% endmacro %}
+
+
+
+{% macro approve_edit_row(action, row_id, row) %}
+{{ group_link(action, get_url('.approve_edit_view', id=row_id, url=return_url), 'fa-edit', 'yellow', '编辑') }}
+{% endmacro %}
+
+{% macro create_eo_row(action, row_id, row) %}
+{{ group_link(action, get_url('engineeringorder.create_view', id=row_id, action="create_eo",url=get_url('engineeringorder.index_view')), 'fa-plus', 'green', '新建工程指令') }}
+{% endmacro %}
+
+{% macro put_in_store(action, row_id, row) %}
+{{ group_link(action, get_url('storage.create_view', id=row_id, model=row, action="put_in_store",url=get_url('storage.index_view')), 'fa-plus', 'green', '准备入库') }}
+{% endmacro %}
+
+{% macro create_st_row(action, row_id, row) %}
+{{ group_link(action, get_url('troubleshooting.create_view', id=row_id, action="create_st", url=get_url('troubleshooting.index_view')), 'fa-plus', 'green', '制定排故方案') }}
+{% endmacro %}
+
+{% macro create_er_row(action, row_id, row) %}
+{{ group_link(action, get_url('examinerepairrecord.create_view', id=row_id, action="create_er", view=return_url, url=get_url('examinerepairrecord.index_view')), 'fa-plus', 'green', '新建排故检修记录') }}
+{% endmacro %}
+
+{% macro create_rw_row(action, row_id, row) %}
+{{ group_link(action, get_url('routinework.create_view', id=row_id, action="createRW",url=get_url('routinework.index_view')), 'fa-plus', 'green', '新建例行工作') }}
+{% endmacro %}
+
+{% macro create_mr_row(action, row_id, row) %}
+{{ group_link(action, get_url('maintenancerecord.create_view', id=row_id, action="create_mr",url=get_url('maintenancerecord.index_view')), 'fa-plus', 'green', '新建维护保养记录') }}
+{% endmacro %}
+
+{% macro create_rf_row(action, row_id, row) %}
+{{ group_link(action, get_url('reservedfault.create_view', id=row_id, action="createRF",url=get_url('reservedfault.index_view')), 'fa-plus', 'green', '新建保留故障') }}
+{% endmacro %}
+
+{% macro create_in_row(action, row_id, row) %}
+{{ group_link(action, get_url('storage.create_view', id=row_id, model=row, action="createIn",url=get_url('storage.index_view')), 'fa-plus', 'green', '新建入库单') }}
+{% endmacro %}
+
+{% macro create_out_row(action, row_id, row) %}
+{{ group_link(action, get_url('putoutstoremodel.create_view', id=row_id, model=row, action="createOut",url=get_url('putoutstoremodel.index_view')), 'fa-plus', 'green', '准备出库') }}
+{% endmacro %}
+
+{% macro create_scrap_row(action, row_id, row) %}
+{{ group_link(action, get_url('scrap.create_view', id=row_id, model=row, action="scrap",url=get_url('scrap.index_view')), '', 'green', '报废') }}
+{% endmacro %}
+
+{% macro purchase_application_row(action, row_id, row) %}
+{{ group_link(action, get_url('purchaseapplication.create_view', id=row_id, model=row, action="create",url=get_url('purchaseapplication.index_view')), '', 'green', '采购') }}
+{% endmacro %}
+
+{% macro borrow_application_row(action, row_id, row) %}
+{{ group_link(action, get_url('lendapplication.create_view', id=row_id, model=row, action="create",url=get_url('lendapplication.index_view')), '', 'green', '借入') }}
+{% endmacro %}
+
+{% macro create_br_row(action, row_id, row) %}
+{{ group_link(action, get_url('borrowinginreturnmodel.create_view', id=row_id, action="createBR",url=get_url('borrowinginreturnmodel.index_view')), 'fa-plus', 'green', '借入归还') }}
+{% endmacro %}
+
+{% macro create_lr_row(action, row_id, row) %}
+{{ group_link(action, get_url('loanreturnorder.create_view', id=row_id, action="createLR",url=get_url('loanreturnorder.index_view')), 'fa-plus', 'green', '借出归还') }}
+{% endmacro %}
+
+{% macro create_rp_rt_row(action, row_id, row) %}
+{{ group_link(action, get_url('repairreturnorder.create_view', id=row_id, action="createLR",url=get_url('repairreturnorder.index_view')), 'fa-plus', 'green', '新建送修归还') }}
+{% endmacro %}
+
+{% macro create_as_row(action, row_id, row) %}
+{{ group_link(action, get_url('assemble.create_view', id=row_id, action="createAS",url=get_url('assemble.index_view')), 'fa-plus', 'green', '准备装机') }}
+{% endmacro %}
+
+{% macro reserve_again_row(action, row_id, row) %}
+{{ group_link(action, get_url('.approve_edit_view', id=row_id, action="reserve_again",url=return_url), 'fa-reorder (alias)', 'green', '继续保留') }}
+{% endmacro %}
+
+{% macro record_row(action, row_id, row) %}
+{{ group_link(action, get_url('.record_view', id=row_id, url=return_url), 'fa-eye', 'green', '履历') }}
 {% endmacro %}
 
 {% macro view_row(action, row_id, row) %}
 {{ group_link(action, get_url('.details_view', id=row_id, url=return_url), 'fa-eye', 'blue', '查看') }}
 {% endmacro %}
 
-<!-- 
+<!-- 几个组合的操作仅需简单的跳转到查看页即可 -->
+{% macro approve_group(action, row_id, row) %}
+{{ group_link(action, get_url('.action_view', id=row_id, url=return_url, verb='approve'), 'fa-tags', 'green-turquoise', '审批') }}
+{% endmacro %}
+
+{% macro sec_approve_group(action, row_id, row) %}
+{{ group_link(action, get_url('.action_view', id=row_id, url=return_url, verb='second_approved'), 'fa-tags', 'green-turquoise', '二级审批') }}
+{% endmacro %}
+
+{% macro review_group(action, row_id, row) %}
+{{ group_link(action, get_url('.action_view', id=row_id, url=return_url, verb='review'), 'fa-tag', 'green-meadow', '复核') }}
+{% endmacro %}
+
+{% macro sent_group(action, row_id, row) %}
+{{ group_link(action, get_url('.action_view', id=row_id, url=return_url, verb='sent'), 'fa-sign-out', 'purple', '下发') }}
+{% endmacro %}
+
+{% macro upload_meeting_file_row(action, row_id, row) %}
+{{ group_link(action, get_url('.action_view', id=row_id, url=return_url, verb='upload_meeting_file'), 'fa-sign-out', 'purple', '上传会议纪要') }}
+{% endmacro %}
+
+{% macro upload_contract_file_row(action, row_id, row) %}
+{{ group_link(action, get_url('.action_view', id=row_id, url=return_url, verb='upload_contract_file'), 'fa-sign-out', 'purple', '上传合同文件') }}
+{% endmacro %}
+
+{% macro submit_review_group(action, row_id, row) %}
+{{ group_link(action, get_url('.action_view', id=row_id, url=return_url, verb='submit_review'), 'fa-bell-o', 'purple', '提交复核') }}
+{% endmacro %}
+
+{% macro review_again_group(action, row_id, row) %}
+{{ group_link(action, get_url('.action_view', id=row_id, url=return_url, verb='review_again'), 'fa-level-up', 'green', '再次复核') }}
+{% endmacro %}
+
+<!-- 模态相关的 -->
+{% macro modal_group_link(action, url, icon, color='', label='', modal_window_id='fa_modal_window') %}
+<a type="button" class="btn btn-group-item {{ color }}" href="{{ url }}" title="{{ action.title or '' }}" data-toggle="modal" data-target="#{{ modal_window_id }}">
+  <i class="fa {{ icon }}"></i>{{ label }}
+</a>
+{% endmacro %}
+
+{% macro edit_modal_row(action, row_id, row) %}
+{{ modal_group_link(action, get_url('.edit_view', id=row_id, url=return_url, sub=sub, modal=True), 'fa-edit', 'green', '编辑') }}
+{% endmacro %}
+
+{% macro view_modal_row(action, row_id, row) %}
+{{ modal_group_link(action, get_url('.details_view', id=row_id, url=return_url, sub=sub, modal=True), 'fa-eye', 'blue', '查看') }}
+{% endmacro %}
+
+{% macro delete_modal_row(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.delete_view', action='delete', id=row_id, sub=sub, url=return_url), ' fa-close (alias)', 'red', '删除', '确认要删除指定的数据吗', '删除') }}
+{% endmacro %}
+
+<!--
 rollurl 为弹出框的表单提交的地址
 annotation 参数设为1代表需要审批意见
 -->
 {% macro choose_with_post(action, id, url, icon, color='', label='' , text='',  title='', annotation='') %}
 <a type="button" class="btn btn-group-item {{ color }}" onclick="return popup('{{ text }}', '{{ title }}', '{{ url }}', '{{ annotation }}');" title="{{ label }}"  data-toggle="modal" data-target="#myModal">
-  <i class="fa {{ icon }}">{{ label }}</i>
+  <i class="fa {{ icon }}"></i>{{ label }}
 </a>
+{% endmacro %}
+
+{% macro receive_row(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.custom_action', action='receive', id=row_id), ' fa-csign-in)', 'red', '接收', '确认要接收这条数据吗', '接收') }}
 {% endmacro %}
 
 {% macro delete_row(action, row_id, row) %}
 {{ choose_with_post(action, row_id, get_url('.delete_view', action='delete', id=row_id), ' fa-close (alias)', 'red', '删除', '确认要删除指定的数据吗', '删除') }}
+{% endmacro %}
+
+{% macro finish_row(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.custom_action', action='finish', id=row_id), 'fa-check', 'red', '完成', '确认指定的数据不再修改吗', '完成') }}
+{% endmacro %}
+
+{% macro send_row(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.custom_action', action='send', id=row_id), 'fa-check', 'red', '发送', '确定要发送该信息吗', '发送') }}
 {% endmacro %}
 
 {% macro submit_review_row(action, row_id, row) %}
@@ -49,6 +204,10 @@ annotation 参数设为1代表需要审批意见
 {{ choose_with_post(action, row_id, get_url('.custom_action', action='approved', id=row_id), 'fa-check', 'green', '审批通过', '', '审批通过','1') }}
 {% endmacro %}
 
+{% macro sec_approved_row(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.custom_action', action='second_approved', id=row_id), 'fa-check', 'green', '二级审批通过', '', '二级审批通过','1') }}
+{% endmacro %}
+
 {% macro approve_again_row(action, row_id, row) %}
 {{ choose_with_post(action, row_id, get_url('.custom_action', action='approve_again', id=row_id), 'fa-level-up', 'green', '再次审批', '确认再次审批吗？', '再次审批', '') }}
 {% endmacro %}
@@ -63,4 +222,75 @@ annotation 参数设为1代表需要审批意见
 
 {% macro approve_refuse_row(action, row_id, row) %}
 {{ choose_with_post(action, row_id, get_url('.custom_action', action='approve_refuse', id=row_id), ' fa-ban', 'yellow', '审批拒绝', '确认审批拒绝吗？', '审批拒绝', '1') }}
+{% endmacro %}
+
+{% macro sec_approve_refuse_row(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.custom_action', action='second_approve_refuse', id=row_id), ' fa-ban', 'yellow', '二级审批拒绝', '确认二级审批拒绝吗？', '审批拒绝', '1') }}
+{% endmacro %}
+
+{% macro out_store_finish_row(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.custom_action', action='out_store_finish', id=row_id), ' fa-check', 'red', '出库完成', '出库完成后不允许再建出库单,确认出库完成吗？', '出库完成') }}
+{% endmacro %}
+
+
+{% macro in_store_finish_row(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.custom_action', action='in_store_finish', id=row_id), ' fa-check', 'red', '全部入库', '全部入库后不允许再建入库单,确认全部入库吗？', '全部入库') }}
+{% endmacro %}
+
+
+{% macro in_store_part_group(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.custom_action', action='in_store_part', id=row_id), ' fa-check', 'red', '部分入库', '确定要部分入库么', '部分入库',) }}
+{% endmacro %}
+
+
+{% macro out_store_part_group(action, row_id, row) %}
+{{ choose_with_post(action, row_id, get_url('.custom_action', action='out_store_part', id=row_id), ' fa-check', 'red', '部分出库', '确定要部分出库么', '部分出库',) }}
+{% endmacro %}
+
+
+{% macro modal_row(action, url, icon, color='', label='') %}
+<a class="btn btn-group-item {{ color }}" href="{{ url }}" title="{{ action or '' }}" data-toggle='modal' data-target="#fa_modal_window">
+  <i class="fa {{ icon }}"></i>{{ label }}
+</a>
+{% endmacro %}
+
+
+{% macro check_complete_row(action, row_id, row) %}
+<a type="button" class="btn btn-group-item blue" href="{{get_url('checkwarning.edit_view', id=row_id, url=return_url, modal=True, action=edit)}}" title="检查完成" data-toggle="modal" data-target="#fa_modal_window">
+检查完成
+</a>
+{% endmacro %} 
+
+{% macro location_href(action, id, url, icon, color='', label='' , text='',  title='', annotation='') %}
+<a type="button" class="btn btn-group-item {{ color }}" title="{{ label }}" href="{{ url }}">
+  <i class="fa {{ icon }}"></i>{{ label }}
+</a>
+{% endmacro %}
+
+{% macro aircraft_row(action, url, icon, color='', label='') %}
+<a class="btn btn-group-item {{ color }}" href="{{ url }}" title="{{ action or '' }}" data-toggle='modal' data-target="#fa_modal_window">
+  <i class="fa {{ icon }}"></i>{{ label }}
+</a>
+{% endmacro %}
+
+{% macro aircraft_details_row(action, row_id, row, sub) %}
+{% set sub = request.args.get('sub') %}
+{{ aircraft_row(action, get_url('.details_view', id=row_id, sub=sub, modal='True'), 'fa-eye', 'blue', '查看') }}
+{% endmacro %}
+
+{% macro aircraft_edit_row(action, row_id, sub) %}
+{% set sub = request.args.get('sub') %}
+{% set aircraftType = request.args.get('flt_1') %}
+{{ aircraft_row(action, get_url('.edit_view', id=row_id, sub=sub, type=aircraftType, modal='True'), 'fa-edit', 'green', '编辑') }}
+{% endmacro %}
+
+{% macro aircraft_delete_row(action, row_id, row) %}
+{% set sub = request.args.get('sub') %}
+<a type="button" class="btn btn-group-item red" onclick="return popup('确认要删除指定的数据吗', '删除日志', '{{ get_url('.delete_view', sub=sub ,id=row_id) }}', '');" title="删除"  data-toggle="modal" data-target="#myModal">
+  <i class="fa  fa-close"></i>删除
+</a>
+{% endmacro %}
+
+{% macro routine_work_finish(action, row_id, row)%}
+{{ group_link(action, get_url('.action_view', id=row_id, url=return_url, verb='finish'), 'fa-check', 'green', '完成') }}
 {% endmacro %}

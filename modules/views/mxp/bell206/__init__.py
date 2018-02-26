@@ -22,7 +22,7 @@ class BELL206View(MxpBaseView):
             'scheduled': dict(**ScheduledMxCheck()),
             'life-control': dict(**LifeControlUnit()),
             'flight-line-check': dict(**FlightLineCheck()),
-            'unsheduled-mx-check': dict(**UnscheduledMxCheck()),
+            'unscheduled-mx-check': dict(**UnscheduledMxCheck()),
             'time-control-unit': dict(**TimeControlUnit()),
         }
 

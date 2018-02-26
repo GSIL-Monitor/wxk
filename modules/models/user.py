@@ -26,15 +26,15 @@ class User(Model, UserMixin):
     # 昵称
     nickName = schema.Column(types.String(255))
     # 用户名
-    username = schema.Column(types.String(255))
+    username = schema.Column(types.String(255), unique=True)
     # 口令
     password = schema.Column(types.String(512))
-    email = schema.Column(types.String(255))
+    email = schema.Column(types.String(255), unique=True)
     phone = schema.Column(types.String(255))
     active = schema.Column(types.Boolean)
 
     roles = db.relationship('Role', secondary=roles_users,
-                            backref=db.backref('uesrs', lazy='dynamic'))
+                            backref=db.backref('users', lazy='dynamic'))
 
     confirmed_at = schema.Column(types.DateTime)
 

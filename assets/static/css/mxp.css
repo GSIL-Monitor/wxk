@@ -1,0 +1,34 @@
+  .icon-calendar:before,
+  .icon-time:before{content:initial;}
+  
+  .bootstrap-datetimepicker-widget{z-index: 20000}
+  
+  .dropdown-menu{position: absolute;display: none;float: left;min-width: 160px;}
+  
+  li{list-style: none;}
+  
+  button.close{background-image: url(/static/img/remove-icon-small.png);}
+  
+  .fileinput-button input {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    opacity: 0;
+    font-size: 200px;
+    direction: ltr;
+    cursor: pointer;
+}
+
+.filename{
+     overflow: hidden;
+     text-overflow: ellipsis;
+     white-space: nowrap;
+     width: 10em;
+     z-index: 99999;
+ }
+
+.filename:hover{
+   overflow:visible;
+   width: auto;
+}

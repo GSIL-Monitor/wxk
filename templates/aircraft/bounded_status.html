@@ -1,0 +1,201 @@
+{% macro boundedStatusModal() %}
+<style>
+  .img-responsive{width:60px;display: block;float:left;}
+  .contentTitle{display: block; float: left;  height: 45px;  line-height: 45px;}
+  .addTrace{float: right;    margin-right: 13px; display: none;    margin-top: 2px;  font-size: 14px;}
+  .table tbody tr td{overflow: hidden;  text-overflow:ellipsis;  
+          white-space: nowrap; }
+</style>
+
+{# 增加模态框, 没有使用flask-admin的lib实现 #}
+<div class="modal fade" id="fa_bound_modal_window" tabindex="-1" role="dialog" aria-labelledby="fa_modal_label">
+  <div class="modal-dialog modal-lg" role="document">
+  {# bootstrap version > 3.1.0 required for this to work #}
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="background-image: none !important">
+          &times;
+        </button>
+        <h4 class="modal-title" id="myModalLabel">维修方案绑定状态</h4>
+      </div>
+      <div class="modal-body" id="myModalText">
+        {% for bind_info in bind_status %}
+        <div class="row">
+          <div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-2">
+            <!-- TODO: 图片信息如何获取? -->
+            <!-- <img src="{{ url_for('static', filename='img/r22.jpg') }}" class="img-responsive" alt=""> -->
+          </div>
+          <div class="col-md-offset-1 col-md-3 col-sm-3">
+            <label class="contentTitle">
+              <span class="label label-info">{{ bind_info.name }}</span>
+            </label>
+          </div>
+          <div class="col-md-5 col-sm-6 contentTitle">
+            {% if bind_info.status %}
+            <div class="row">
+              <div class="col-md-offset-2 col-md-4 col-sm-4">
+                <a type="button" class="btn" data-toggle="modal" data-target="#fa_status_modal_window" data-dismiss="modal">修改绑定信息</a>
+              </div>
+            {# TODO: 这项操作可能会耗时，需要提供加载界面？ #}
+              <div class="col-md-3 col-sm-3">
+                <a type="button" class="" onclick="return popup('确认要解绑维修方案吗', '解绑', '{{ get_url('.bind_mxp', id=bind_info.id, plane=model.id, return_url=return_url) }}', '');" title="解绑"  data-toggle="modal" data-target="#myModal">
+              {% if admin_view.can_remove_status %}
+                  <i class="btn btn-danger">解绑</i>
+              {% endif %}
+                </a>
+              
+              </div>
+            </div>
+            {% else %}
+            <div class="col-md-4 col-sm-4">
+              {# TODO: 这项操作可能会耗时，需要提供加载界面？ #}
+              <form class="inline-form" method="POST" action="{{ get_url('.bind_mxp', bind=1, id=bind_info.id, plane=model.id, return_url=request.url) }}">
+                <button type="submit" class="btn btn-success">绑定</button>
+              </form>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="modal-body" style="display: none">
+        <label for="" class="col-md-2" style="margin-top: 6px !important;"></label>
+        <div class="form-group">
+          <div class="col-md-10">
+              <input type="text" class="form-control">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>
+
+{# 增加模态框, 没有使用flask-admin的lib实现 #}
+<div class="modal fade" id="fa_status_modal_window" tabindex="-1" role="dialog" aria-labelledby="fa_modal_label">
+  <div class="modal-dialog modal-lg" role="document">
+  {# bootstrap version > 3.1.0 required for this to work #}
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="background-image: none !important">
+          &times;
+        </button>
+        <h4 class="modal-title" id="">维修方案绑定状态详情</h4>
+      </div>
+      <div class="modal-body" id="">
+        <div class="col-md-12">
+          <div class="tabbable-line">
+            <ul class="nav nav-tabs bounded_ul">
+              {# TODO: 默认选中第一个? #}
+              {% for category in support_bounded_categories %}
+              <li>
+                <a href="#{{ category.id }}" for="{{ get_url('.get_bounded_status', id=model.id, mxtype=category.id) }}" data-toggle="tab">
+                  {{ category.name }}
+                </a>
+              </li>
+              {% set first = false %}
+              {% endfor %}
+              <!-- <li>
+                <a href="#">
+                  TODO: 搜索支持
+                </a>
+              </li> -->
+            </ul>
+            <div class="tab-content">
+              {% for category in support_bounded_categories %}
+              <div class="tab-pane col-md-12" id="{{ category.id }}">
+                {# TODO: 渲染ajax的数据，需要从数据的mxType与这里的id进行对应, 地址请求 get_url('.get_bounded_status', id=飞机编号) #}
+
+                <div class="col-md-4"></div>
+               
+                <div class="col-md-8" style="display: none">
+                  <div class="between"><span class="profile-desc-title">基本信息</span></div>
+                  <div class="top"></div>
+                  <div class="between"><span class="profile-desc-title">监控状态</span>
+                  <a href="javascript:;" class="addTrace" planeid="{{model.id}}">添加</a>
+
+                  </div>
+                  <div class="bottom">
+                    <table class="table table-hover table-bordered table-striped basic_infomation profile-desc-text">
+                      <tr class="bound_trace">
+                        <td class="profile-desc-title col-sm-5">是否跟踪:</td>
+                        <td>
+                          <div class="checker">
+                            <span> <input type="checkbox" class="onoff"></span>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr class="bound_number">
+                        <td class="profile-desc-title col-sm-5">序号:</td>
+                        <td>
+                          <a href="javascript:;" class="mx_number" data-type="text" data-pk="1" data-placement="right" data-placeholder="Required" data-original-title="序号" data-url=''></a>
+                        </td>
+                      </tr>
+                      <tr class="bound_date">
+                        <td class="profile-desc-title col-sm-5">上次完成日期:</td>
+                        <td>
+                          <a href="javascript:;" class="mx_date" data-type="date" data-viewformat="yyyy-mm-dd" data-pk="1" data-placement="right" data-original-title="请选择日期" data-url="">
+                          </a>
+                          <input type="hidden" id="mx_post_url" value="{{ get_url('.get_bounded_status', batch=1) }}">
+                        </td>
+                      </tr>
+                      <tr class="bound_time">
+                        <td class="profile-desc-title col-sm-5">完成起落次数:</td>
+                        <td>
+                          <a href="javascript:;" class="mx_time" data-type="text" data-pk="1" data-placement="right" data-placeholder="Required" data-original-title="完成起落次数" data-url=''></a>
+                        </td>
+                      </tr>
+                      <tr class="bound_hour">
+                        <td class="profile-desc-title col-sm-5">完成后飞行小时:</td>
+                        <td>
+                          <a href="javascript:;" class="mx_hour" data-type="text" data-pk="1" data-placement="right" data-placeholder="Required" data-original-title="完成后飞行小时" data-url=''></a>
+                        </td>
+                      </tr>
+                      <tr class="bound_engineTime">
+                        <td class="profile-desc-title col-sm-5">发动机时间:</td>
+                        <td>
+                         <a href="javascript:;" class="mx_engineTime" data-type="text" data-pk="1" data-placement="right" data-placeholder="Required" data-original-title="发动机时间" data-url=''></a>
+                          </a>
+                        </td>
+                      </tr>
+                      <tr class="bound_tc">
+                        <td class="profile-desc-title col-sm-5">完成后扭矩循环数:</td>
+                        <td>
+                          <a href="javascript:;" class="mx_tc" data-type="text" data-pk="1" data-placement="right" data-placeholder="Required" data-original-title="完成后扭矩循环数" data-url=''></a>
+                        </td>
+                      </tr>
+                      <tr class="bound_ng">
+                        <td class="profile-desc-title col-sm-5">完成后燃气发生器循环数:</td>
+                        <td>
+                          <a href="javascript:;" class="mx_ng" data-type="text" data-pk="1" data-placement="right" data-placeholder="Required" data-original-title="完成后燃气发生器循环数" data-url=''></a>
+                        </td>
+                      </tr>
+                      <tr class="bound_nf">
+                        <td class="profile-desc-title col-sm-5">完成后动力涡轮循环数:</td>
+                        <td>
+                          <a href="javascript:;" class="mx_nf" data-type="text" data-pk="1" data-placement="right" data-placeholder="Required" data-original-title="完成后动力涡轮循环数" data-url=''></a>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        &nbsp;
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="">
+          确认
+        </button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endmacro %}

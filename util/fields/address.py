@@ -2,14 +2,14 @@
 
 from __future__ import unicode_literals
 
-from wtforms import fields, ValidationError
+from wtforms import fields
 try:
     from wtforms.fields.core import _unset_value as unset_value
 except ImportError:
     from wtforms.utils import unset_value
 
-from util.widgets.address import AddressInput
 from tonghangyun_common.models.model import Address
+from ..widgets.address import AddressInput
 
 
 class AddressField(fields.Field):

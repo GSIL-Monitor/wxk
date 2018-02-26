@@ -2,17 +2,32 @@
 {% import 'admin/lib.html' as lib with context %}
 {% import 'admin/model/row_actions.html' as row_actions with context %}
 {% import './lib.html' as custom_lib with context %}
+{% import './aircraft/bounded_status.html' as confirm with context %}
 
 {% block body%}
 <style>.basic_infomation td,.basic_infomation tr,.basic_infomation th,.basic_infomation{border:none !important;} </style>
 <link href="{{ url_for('static', filename='css/profile.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/load7.css') }}" rel="stylesheet">
+
 <!-- BEGIN PROFILE SIDEBAR -->
 <div class="profile-sidebar" style="width: 250px;">
     <!-- PORTLET MAIN -->
     <div class="portlet light profile-sidebar-portlet">
         <!-- SIDEBAR USERPIC -->
+        <div class="profile-usertitle">
+             <div class="profile-usertitle-name">
+                 {{ model.id }}
+             </div>
+        </div>
+        <div class="profile-usertitle">
+        </div>
         <div class="profile-userpic">
-            <img src="{{ url_for('static', filename='img/avatar1.jpg') }}" class="img-responsive" alt="">
+          {% if model.imageUrl and model.imageUrl != '--' %}
+            <img src="{{ model.imageUrl }}" class="img-responsive" alt="">
+          {% else %}
+            <!-- <img src="{{ url_for('static', filename='img/default-aircraft.png') }}" class="img-responsive" alt=""> -->
+          {% endif %}
         </div>
         <!-- END SIDEBAR USERPIC -->
         <!-- SIDEBAR USER TITLE -->
@@ -21,108 +36,135 @@
                   {{ title }}
             </div>
             <div class="profile-usertitle-job">
-                 AS350方案
+              {% set right = bounded and model.boundedMxp != '--' %}
+              {% if right %}
+              <h3><span class="label label-success">{{ model.boundedMxp }}</span></h3>
+              {% endif %}
+              {% set wrong = not bounded and model.boundedMxp != '--' %}
+              {% if wrong %}
+              <span class="label label-warning">未绑定方案，请绑定</span>
+              {% endif %}
             </div>
         </div>
         <!-- END SIDEBAR USER TITLE -->
         <!-- SIDEBAR BUTTONS -->
         <div class="profile-userbuttons">
-            <button type="button" class="btn btn-circle btn-danger btn-sm">维护</button>
-            <button type="button" class="btn btn-circle green-haze btn-sm">保存</button>
+          {% if admin_view.can_edit_status %}
+          <a type="button" class="btn btn-circle purple-plum btn-sm" data-toggle="modal" data-target="#fa_bound_modal_window">
+          {% if bounded %}
+              编辑状态
+          {% else %}
+              绑定方案
+          {% endif %}
+          </a>
+          {% endif %}
         </div>
         <!-- END SIDEBAR BUTTONS -->
+        <!-- STAT -->
+        <div class="row list-separated profile-stat" style="margin-top: 30px;">
+            <div class="col-md-6 col-sm-4 col-xs-6">
+                <div class="uppercase profile-stat-title total">
+                     {{ '%.2f'|format(model.totalHours) }}
+                </div>
+                <div class="uppercase profile-stat-text">
+                     总飞行小时
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-4 col-xs-6">
+                <div class="uppercase profile-stat-title">
+                     {{ model.totalTimes }}&nbsp;
+                </div>
+                <div class="uppercase profile-stat-text">
+                     总起降次数
+                </div>
+            </div>
+        </div>
+
+        <div class="row list-separated profile-stat">
+          <div class="col-md-6 col-sm-4 col-xs-6">
+              <div class="uppercase profile-stat-title total">
+                  {{ model.totalengineTime }}
+              </div>
+              <div class="uppercase profile-stat-text">
+                   总发动机时间
+              </div>
+          </div>
+          <div class="col-md-6 col-sm-4 col-xs-6">
+              <div class="uppercase profile-stat-title total">
+                   {#{{ '%.2f'|format(model.totalpropellerTime) }}#}
+                   {{ model.totalpropellerTime }}
+              </div>
+              <div class="uppercase profile-stat-text">
+                   总螺旋桨时间
+              </div>
+          </div>
+        </div>
+        <!-- END STAT -->
         <!-- SIDEBAR MENU -->
-        <div class="profile-usermenu">
+        <div class="profile-usermenu" style="margin-top:0px">
             <ul class="nav">
                 <li class="active">
-                    <a href="{{ return_url }}details/?sub=basic&id={{ id }}">
-                    <i class="icon-home"></i>
+                    <a href="{{ get_url('.aircraft_details_view', sub='basic', id=model._id) }}">
+                    <i class="icon-info"></i>
                     基本信息 </a>
                 </li>
+                {% if bounded %}
                 <li>
-                    <a href="{{ return_url }}details/?sub=due_list&id={{ id }}">
-                    <i class="icon-settings"></i>
-                    到期列表 </a>
-                </li>
-                <li>
-                    <a href="{{ return_url }}details/?sub=flightlog&id={{ id }}">
+                    <a href="{{ get_url('.aircraft_details_view', sub='due_list', id=model._id) }}">
                     <i class="icon-check"></i>
+                    质量控制 </a>
+                </li>
+                {% endif %}
+                {#<li>
+                    <a href="{{ get_url('.aircraft_details_view', sub='flightlog', id=model._id, flt_0=model.id, flt_1=model.planeType) }}">
+                    <i class="icon-pointer"></i>
                     飞行日志 </a>
-                </li>
-                <li>
-                    <a href="#tab_1_4">
-                    <i class="icon-info"></i>
+                </li>#}
+                {#<li>
+                    <a href="{{ get_url('.aircraft_details_view', sub='maintenancelog', id=model._id, flt_0=model.id, flt_1=model.planeType) }}">
+                    <i class="icon-list"></i>
                     维修日志 </a>
-                </li>
+                </li>#}
             </ul>
         </div>
         <!-- END MENU -->
     </div>
     <!-- END PORTLET MAIN -->
-    <!-- PORTLET MAIN -->
-    <div class="portlet light">
-        <!-- STAT -->
-        <div class="row list-separated profile-stat">
-            <div class="col-md-6 col-sm-4 col-xs-6">
-                <div class="uppercase profile-stat-title">
-                     1005
-                </div>
-                <div class="uppercase profile-stat-text">
-                     小时
-                </div>
-            </div>
-            <div class="col-md-6 col-sm-4 col-xs-6">
-                <div class="uppercase profile-stat-title">
-                     2006
-                </div>
-                <div class="uppercase profile-stat-text">
-                     次起落
-                </div>
-            </div>
-        </div>
-
-        <div class="row list-separated profile-stat">
-            <div class="col-md-6 col-sm-4 col-xs-6">
-                <div class="uppercase profile-stat-title">
-                     1
-                </div>
-                <div class="uppercase profile-stat-text">
-                     小时/月
-                </div>
-            </div>
-            <div class="col-md-6 col-sm-4 col-xs-6">
-                <div class="uppercase profile-stat-title">
-                     1
-                </div>
-                <div class="uppercase profile-stat-text">
-                      次起落/月
-                </div>
-            </div>
-        </div>
-        <!-- END STAT -->
-    </div>
-    <!-- END PORTLET MAIN -->
 </div>
 <!-- END BEGIN PROFILE SIDEBAR -->
-<!-- BEGIN PROFILE CONTENT -->
+
+{{ confirm.boundedStatusModal() }}
 
 {% block content %}
 {% endblock %}
 
-<!-- END PROFILE CONTENT -->
-    <script>
-        function add_class(){
-            var body = document.body
-            body.setAttribute('class','page-header-fixed page-sidebar-closed-hide-logo page-sidebar-closed')
-        }
-        window.onload = function(){
-            add_class()
-            close_menu()
-        }
-        // 收起左侧菜单
-        function close_menu(){
-        $('.page-sidebar-menu').attr('class','page-sidebar-menu page-sidebar-menu-closed')
-        }
-    </script>
-    <!-- END PAGE CONTENT-->
+{% endblock %}
+
+{% block tail %}
+
+{{ super() }}
+
+<script src="{{ url_for('static', filename='js/aircraft_bound.js') }}"></script>
+
+{% block custom_tail %}
+{# 所有子扩展需要增加JS的，应该扩展这个custom_tail，不要改变tail的内容 #}
+{% endblock %}
+
+<script>
+$(function() {
+  // boundStatus({#{{ global_label|tojson }}#})
+  {#boundStatus({y5b:{'source':'来源'}}, "{{ model.planeType }}");#}
+  
+  $(".total").each(function(k,v,arr){
+      var totalHours = $.trim($(this).html())
+      var hour = totalHours.split(".")[0]
+      var minute = parseFloat('0.'+totalHours.split(".")[1])
+      
+      minute = Math.round(minute * 60)
+      
+      var totalHours = hour+':'+minute
+      $(this).html(totalHours)
+  })
+})
+</script>
 {% endblock %}

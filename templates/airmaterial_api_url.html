@@ -1,0 +1,77 @@
+{% macro airmaterl_url() %}
+function getPnUrl() {
+    return "{{ url_for('airmaterialcategory.get_from_partNumber') }}"
+}
+function getPnFromCaUrl() {
+    return "{{ url_for('airmaterialcategory.get_pn_from_ca')}}"
+}
+function getPnFromTypes() {
+    return "{{ url_for('storage.get_pn_from_types')}}"
+}
+function getPnFromId() {
+     return "{{ url_for('storage.get_pn_from_id')}}"
+}
+function getUniqueSerialnum() {
+    return "{{ url_for('airmaterialstoragelist.get_unique_serialnum')}}"
+}
+function getPnFromListCaUrl() {
+    return "{{ url_for('airmaterialstoragelist.get_pn_from_list_ca')}}"
+}
+function getFromListSn() {
+    return "{{ url_for('airmaterialstoragelist.get_from_list_sn')}}"
+}
+function getSnFormListPn() {
+    return "{{ url_for('airmaterialstoragelist.get_sn_form_list_pn')}}"
+}
+function getMaxQuantityFromList() {
+    return "{{ url_for('airmaterialstoragelist.get_max_quantity_from_list')}}"
+}
+function getDateFromList() {
+    return "{{ url_for('airmaterialstoragelist.get_date_from_list')}}"
+}
+function getPnFromLoanCa() {
+    return "{{ url_for('loanapplicationorder.get_pn_from_loan_ca')}}"
+}
+function getSnFromLoanpn() {
+    return "{{ url_for('loanapplicationorder.get_sn_from_loan_pn')}}"
+}
+function getFromLoanPn() {
+    return "{{ url_for('loanapplicationorder.get_from_loan_pn')}}"
+}
+function getPnFromRepairCa() {
+    return "{{ url_for('repairapplication.get_pn_from_repair_ca')}}"
+}
+function getSnFromRepairpn() {
+    return "{{ url_for('repairapplication.get_sn_from_repair_pn')}}"
+}
+function getFromRepairPn() {
+    return "{{ url_for('repairapplication.get_from_repair_pn')}}"
+}
+function getPlaneInfosFromPn() {
+    return "{{ url_for('disassembleorder.get_plane_infos_from_pn')}}"
+}
+function get_bounded_aircraft() {
+    return "{{ url_for('disassembleorder.get_bounded_aircraft')}}"
+}
+function getPnFromBoundedCategory() {
+    return "{{ url_for('disassembleorder.get_pn_from_bounded_category')}}"
+}
+function getPnFormLendApp() {
+    return "{{ url_for('lendapplication.get_pn_form_lend_app')}}"
+}
+function getSupplierDataFromName() {
+    return "{{ url_for('supplier.get_supplier_data_from_name')}}"
+}
+function getRepairSupplierDataFromName() {
+    return "{{ url_for('repairsupplier.get_repair_supplier_data_from_name')}}"
+}
+function getPnFromAsapCa() {
+    return "{{ url_for('assembleapplication.get_pn_from_asap_ca')}}"
+}
+function getBorrowInfo() {
+    return "{{ url_for('borrowinginreturnmodel.get_borrow_info')}}"
+}
+function getNumberFromAsapPn() {
+    return "{{ url_for('assembleapplication.get_number_from_asap_pn')}}"
+}
+{% endmacro %}

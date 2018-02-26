@@ -4,15 +4,15 @@ from __future__ import unicode_literals
 from wtforms import form, fields
 from flask_admin.model.fields import InlineFormField
 
-from ..commom import RelateDocForm, AccessoryForm
-from modules.forms.meta import normal_check_category
+from ..commom import RelateDocForm, AccessoryFileForm
+from ..meta import normal_check_category
 
 
 class NormalCheckForm(form.Form):
     id = fields.StringField('编号')
-    category = fields.SelectField('类别', choices=normal_check_category('r22'))
-    description = fields.StringField('描述信息')
+    category = fields.SelectField('类别', choices=normal_check_category)
+    description = fields.StringField('维修描述')
     relateDoc = InlineFormField(RelateDocForm, '相关文件')
-    accessory = InlineFormField(AccessoryForm, '附件内容')
-    remark = fields.StringField('备注信息')
+    accessory = InlineFormField(AccessoryFileForm, '附件')
+    remark = fields.StringField('备注')
     etag = fields.HiddenField('etag')

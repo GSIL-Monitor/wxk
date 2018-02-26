@@ -2,27 +2,42 @@
 # 工程技术范畴下的各模块视图定义
 
 from .airmaterial_list import AirmaterialListView
-from .in_bound import InBoundView
-from .out_bound import OutBoundView
-from .borrow_sheet import BorrowSheetView
-from .claim_sheet import ClaimSheetView
-from .install_sheet import InstallSheetView
-from .lend_sheet import LendSheetView
-from .purchase_contract import PurchaseContractView
-from .repair_contract import RepairContractView
 from .repair_supplier import RepairSupplierView
-from .return_sheet import ReturnSheetView
 from .supplier import SupplierView
-
+from .airmaterial_category import AirmaterialCategoryView
+from .storage import StorageView
+from .purchase_application import PurchaseApplicationView
+from .lend_application import LendApplicationView
+from .return_material_order import ReturnMaterialOrderView
+from .disassemble_order import DisassembleOrderView
+from .borrowing_in_return import BorrowingInReturnView
+from .put_out_store import PutOutStoreView
+from .assemble import AssembleView
+from .assemble_application import AssembleApplicationView
+from .loan_application_order import LoanApplicationOrderView
+from .loan_return_order import LoanReturnOrderView
+from .repair_application import RepairApplicationView
+from .manufacturer import ManufacturerView
+from .scrap import ScrapView
+from .repair_return_order import RepairReturnOrderView
+from .storage_list import AirMaterialStorageListView
+from .check_waring import CheckWarningView
+from .expire_warning import ExpireWarningView
+from .stock_warning import StockWarningView
 
 __all__ = ['views']
 
 
 views = [
-    AirmaterialListView, InBoundView,
-    OutBoundView, BorrowSheetView,
-    ClaimSheetView, InstallSheetView,
-    LendSheetView, PurchaseContractView,
-    RepairContractView, RepairSupplierView,
-    ReturnSheetView, SupplierView
+    AirmaterialListView, RepairSupplierView,
+    SupplierView,
+    AirmaterialCategoryView, StorageView,
+    PurchaseApplicationView, AirMaterialStorageListView,
+    LendApplicationView, ReturnMaterialOrderView,
+    DisassembleOrderView, AssembleApplicationView,
+    BorrowingInReturnView, AssembleView,
+    PutOutStoreView, LoanReturnOrderView,
+    LoanApplicationOrderView, RepairApplicationView,
+    ManufacturerView, ScrapView, RepairReturnOrderView,
+    CheckWarningView, ExpireWarningView, StockWarningView,
 ]

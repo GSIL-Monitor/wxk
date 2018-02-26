@@ -22,7 +22,7 @@ class SWZ269C1View(MxpBaseView):
         return {
             'scheduled': dict(**ScheduledMxCheck()),
             'life-control': dict(**LifeControlUnit()),
-            'unsheduled-mx-check': dict(**UnscheduledMxCheck()),
+            'unscheduled-mx-check': dict(**UnscheduledMxCheck()),
             'time-control-unit': dict(**TimeControlUnit()),
             'normai-check': dict(**NormalCheck()),
             'special-check': dict(**SpecialCheck())

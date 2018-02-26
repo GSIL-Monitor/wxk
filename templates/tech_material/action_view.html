@@ -1,0 +1,32 @@
+{% extends './details.html' %}
+{% import 'admin/lib.html' as lib with context %}
+{% import './lib.html' as local_lib with context %}
+{% block model_menu_title %}
+ {{ action_name }} - {{ admin_view.name|capitalize }}
+{% endblock %}
+{% block details_search %}
+{% endblock %}
+
+{% block body_bottom %}
+<div class="form">
+    <form action="{{ action or '' }}" method="POST" role="form" class="admin-form form-horizontal form-bordered form-row-stripped"
+        enctype="multipart/form-data">
+        <div class="form-body">
+            {{ local_lib.render_form_fields(form, 4, one_line_columns, form_opts=form_opts) }}
+        </div>
+        <div class="form-actions">
+            {{ local_lib.render_actions_buttons(agreed, refuse, cancel_url) }}
+        </div>
+    </form>
+</div>
+{% endblock %}
+{% block tail %}
+{{ super() }}
+    <script>
+        $('label').each(function () {
+            if ($(this).html().indexOf('审批人员') > -1) {
+                $(this).parent().remove()
+            }
+        })
+    </script>
+{% endblock%}

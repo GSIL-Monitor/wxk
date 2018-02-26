@@ -1,0 +1,10 @@
+{% extends 'pdf.html' %}
+
+
+{% block theme %}
+{% set colspan = 2 * export_columns | length %}
+<th class="tag" colspan="{{ colspan }}" align="right" style="text-align: center; font-size: 20px; line-height: 35px; height:35px">
+  {{ extra.name }}
+</th>
+{% endblock %}
+

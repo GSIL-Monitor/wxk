@@ -1,0 +1,81 @@
+{% import 'admin/lib.html' as lib with context %}
+
+{% import './lib.html' as ctx with context %}
+{% from 'admin/lib.html' import extra with context %}
+
+
+{% block page_body %}
+<style type="text/css">
+  .bootstrap-datetimepicker-widget{z-index: 20000;}
+</style>
+<link href="{{ url_for('static', filename='css/datepicker.css') }}" rel="stylesheet">
+<div class="clearfix">
+</div>
+<!-- BEGIN CONTAINER -->
+<div class="page-top">
+
+  <!-- END SIDEBAR -->
+  <!-- BEGIN CONTENT -->
+
+    <div class="content">
+{% if admin_view.box_color %}
+{% set box_color = admin_view.box_color %}
+{% else %}
+{% set box_color = 'green' %}
+{% endif %}
+
+{% if admin_view.menu_icon_value %}
+{% set icon_value = admin_view.menu_icon_value %}
+{% else %}
+{% set icon_value = 'fa-cogs' %}
+{% endif %}
+
+{% block head %}
+
+  {{ lib.form_css() }}
+{% endblock %}
+
+<div class="portlet box {{ box_color }}">
+  {% block model_menu_bar scoped %}
+  <div class="portlet-title">
+    <div class="caption">
+      {% block model_menu_title %}
+      检查完成
+      {% endblock %}
+    </div>
+
+      {% endblock %}
+    </div>
+{% block model_list_table %}
+<div class="portlet-body form">
+  {% block create_form scoped %}
+
+<form action="{{ action or get_url('.edit_view', id=model.id) }}" method="POST" role="form" class="admin-form form-horizontal form-bordered form-row-stripped" enctype="multipart/form-data">
+  <div class="form-body">
+    {{ lib.render_form_fields(form, form_opts=form_opts) }}
+
+  </div>
+  <div class="form-actions">
+<div class="row">
+  <div class="col-md-offset-3 col-md-9">
+    <input type="submit" class="btn btn-circle blue" value="{{ _gettext('Save') }}" />
+
+    <a href="{{ cancel_url }}" class="btn btn-circle default" role="button" {% if is_modal %}data-dismiss="modal"{% endif %}>{{ _gettext('Cancel') }}</a>
+
+  </div>
+</div>
+  </div>
+</form>
+  {% endblock %}
+</div>
+{% endblock %}
+  </div>
+  <!-- END CONTENT -->
+</div>
+<!-- END CONTAINER -->
+{% endblock %}
+
+{% block tail %}
+ <script src="{{ url_for('static', filename='js/datetimepicker.zh-cn.js') }}"></script>
+
+{% endblock %}

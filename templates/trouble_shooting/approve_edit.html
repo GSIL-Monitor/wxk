@@ -1,0 +1,7 @@
+{% extends './approve_edit.html' %}
+
+{% block tail %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/troubleshooting_validation.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='js/customview_formvalidation.js') }}" type="text/javascript"></script>
+{% endblock %}

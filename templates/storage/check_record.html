@@ -1,0 +1,66 @@
+{% extends 'list.html' %}
+{% import 'storage/lib.html' as cont with context%}
+
+
+{% block model_menu_title %}
+检查记录
+{% endblock %}
+
+{% block model_menu_actions %}
+<div class="actions">
+
+  <!-- TODO: 弹出模态对话框 -->
+  <a href="{{ get_url('.index_view', url=return_url) }}" class="btn btn-default btn-sm">
+  返回
+  </a>
+
+</div>
+{% endblock %}}
+
+  {% block model_list_table %}
+    {% if filters %}
+    <div class="row">
+      <div class="col-md-12">
+      {{ ctx.filter_form() }}
+      </div>
+    </div>
+    {% endif %}
+
+    {% set lvs = [] %}
+
+    {{ cont.render_table_with_color(lvs, admin_view, list_columns, data, get_value, list_row_actions, get_pk_value, row_actions, num_pages, page, page_size, pager_url) }}
+
+    <div class="modal fade" id="fa_modal_window" tabindex="-1" role="dialog" aria-labelledby="fa_modal_label" data-focus-on="input:first" data-backdrop="static">
+      <div class="modal-dialog modal-lg" role="document">
+      {# bootstrap version > 3.1.0 required for this to work #}
+        <div class="modal-content">
+        </div>
+      </div>
+    </div>
+
+  {% endblock %}
+
+{% block tail %}
+{{ super() }}
+<script type="text/javascript">
+  $(function(){
+    var url = location.href
+    url = url.split('&page')[0]
+    $(".pagination li a").each(function(){
+      page_url = $(this).attr('href')
+      if(page_url.indexOf('javascript') >= 0){
+        return
+      }
+      page_url = page_url.split("page=")[1]
+      if(page_url){
+        page = page_url.split('&')[0]
+        page_url = url + '&page=' + page
+      }else{
+        page_url = url
+      }
+      $(this).attr('href', page_url)
+    })
+  })
+</script>
+{% endblock %}
+

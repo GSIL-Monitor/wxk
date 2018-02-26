@@ -9,7 +9,19 @@ from .user import User
 from .role import Role, BasicAction
 
 
-user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+class SupportUsernameDatastore(SQLAlchemyUserDatastore):
+
+    def __init__(self, *args, **kwargs):
+        super(SupportUsernameDatastore, self).__init__(*args, **kwargs)
+
+    def get_user(self, identifier):
+        user = super(SupportUsernameDatastore, self).get_user(identifier)
+        if user is not None:
+            return user
+        return self.user_model.query.filter_by(username=identifier).first()
+
+
+user_datastore = SupportUsernameDatastore(db, User, Role)
 
 
 def init_db(app):

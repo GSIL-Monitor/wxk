@@ -1,0 +1,93 @@
+{% extends 'list.html' %}
+{% import 'admin/lib.html' as lib with context %}
+{% import './lib.html' as local_lib with context %}
+{% from 'airmaterial_api_url.html' import airmaterl_url as amurl%}
+
+{% block head %}
+  {{ super() }}
+  {{ lib.form_css() }}
+  {% if inline_table %}
+    <link href="{{ url_for('static', filename='css/handsontable.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/inline-table.css') }}" rel="stylesheet">
+    <style type="text/css">
+        .handsontable table thead th {
+            font-size: 16px;
+        }
+    
+        .handsontable table tbody td {
+            font-size: 16px;
+        }
+    </style>
+  {% endif %}
+  <style type="text/css">
+    .col-md-2{width: 16.10% !important;}
+  </style>
+{% endblock %}
+
+{% block model_menu_title %}
+编辑 - {{ admin_view.name|capitalize }}
+{% endblock %}
+
+{% block model_menu_actions %}
+{% endblock %}
+
+{% block model_list_table %}
+<div class="portlet-body form">
+  {% block create_form scoped %}
+    <form action="{{ action or '' }}" method="POST" role="form" class="admin-form form-horizontal form-bordered form-row-stripped" enctype="multipart/form-data">
+      <div class="form-body">
+        {{ local_lib.render_form_fields(form, 4,form_opts=form_opts, one_line_columns=one_line_columns) }}
+      </div>
+      <div class="form-actions">
+        {{ local_lib.render_actions_buttons(agreed, refuse, return_url) }}
+      </div>
+      <input type="hidden" name="{{agreed[1]}}" value="{{agreed[0]}}">
+    </form>
+  {% endblock %}
+  {% if inline_table %}
+  <div id="tabletools">
+    <div class="table-toolbar">
+      <div class="row">
+        <div class="col-md-6"><input name="table_datas" type="text" hidden="hidden"></div>
+        <div class="col-md-6">
+          <div class="btn-group pull-right">
+            {% if can_add_line %}
+            <a id="table_new" class="btn blue"><i class="fa fa-plus"></i> 增行</a>
+            {% endif %}
+            {% if can_del_line %}
+            <a id="table_del" class="btn red"><i class="fa fa-minus"></i> 删行</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="inline_table"></div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block list_pager %}{% endblock %}
+
+{% block tail %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/select_planeType.js') }}" type="text/javascript"></script>
+{% if inline_table %}
+<script src="{{ url_for('static', filename='js/handsontable.min.js') }}" type="text/javascript"></script> 
+<script src="{{ url_for('static', filename=extra_table_js) }}" type="text/javascript"></script>
+<script type="text/javascript">
+    {{ amurl() }}
+
+    var columns = eval('{{ table_columns|safe }}');
+    var datas = eval('{{ table_datas|safe }}');
+    $(function() {
+        inLineTable.init({
+            table_datas: datas,
+            table_columns: columns,
+        });
+        $('form').append($("#tabletools"));
+        $(".form-actions").insertAfter($("#tabletools"));
+    });
+</script>
+{% endif %}
+{% endblock %}

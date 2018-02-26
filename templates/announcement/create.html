@@ -1,0 +1,48 @@
+{% extends 'list.html' %}
+{% import 'admin/lib.html' as lib with context %}
+{% import './lib.html' as local_lib with context %}
+{% from './lib.html' import popup_form  as cp_form with context%}
+
+{% block head %}
+  {{ super() }}
+  {{ lib.form_css() }}
+{% endblock %}
+
+{% block model_menu_title %}
+{{ create_or_edit }} - {{ admin_view.name|capitalize }}
+{% endblock %}
+
+{% block model_menu_actions %}
+{% endblock %}
+
+{% block model_list_table %}
+<div class="portlet-body form">
+  {% block create_form scoped %}
+    <form action="{{ action or '' }}" method="POST" role="form" class="admin-form form-horizontal form-bordered form-row-stripped" enctype="multipart/form-data">
+      <div class="form-body">
+        {% set render_ctx = h.resolve_ctx() %}
+        {{ lib.render_form_fields(form, form_opts=form_opts) }}
+      </div>
+      <div class="form-actions">
+        <div class="row">
+          <div class="col-md-3 col-md-offset-3">
+            <input type="submit" class="btn btn-primary" value="暂存" name="edit" />
+            <a href="{{ url_for('.index_view') }}" class="btn default" role="button">{{ _gettext('Cancel') }}</a>
+          </div>
+          <div class="col-md-3">
+            <input type="submit" class="btn btn-danger" onclick="javascript:if(confirm('{{ confirm_str }}')){return true;}return false;" value='发送' name="send" />
+          </div>
+        </div>
+        {{ cp_form() }}
+      </div>
+    </form>
+  {% endblock %}
+</div>
+{% endblock %}
+
+
+{% block tail %}
+  {{ super() }} 
+  <script src="{{ url_for('static', filename='js/message_select_users.js') }}" type="text/javascript">
+  </script>
+{% endblock %}

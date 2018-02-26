@@ -1,0 +1,62 @@
+{% extends 'list.html' %}
+
+{% block body %}
+
+<div class="portlet light">
+  <div class="portlet-title">
+    <div class="caption">
+      {% block menu_title %}
+      <i class="icon-calendar"></i>
+        飞行日志 &amp; 日运行记录
+      {% endblock %}
+    </div>
+    {% block menu_actions %}
+    {% endblock %}
+  </div>
+
+  <div class="porlet-body">
+    {% block content %}
+    <div id='calendar' location="{{ get_url('.edit_view') }}"></div>
+    {% endblock %}
+
+    {% block body_bottom %}
+    {% endblock %}
+  </div>
+</div>
+{% endblock %}
+
+{% block tail %}
+{{ super() }}
+
+{% block exact_tail %}
+<script>
+ jQuery(document).ready(function() {
+   $('#calendar').fullCalendar({
+     monthNames:['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月',],
+     dayNamesShort:['周日','周一','周二','周三','周四','周五','周六',],
+     buttonText:{
+       today: '今天'
+     },
+     eventSources: [
+       // 飞行日志的事件
+       {
+         url: "{{ get_url('.get_events') }}",
+       },
+       // 日运行日志的事件
+       {
+         url: "{{ url_for('companydayrecord.get_events') }}",
+       },
+     ],
+     aspectRatio: 1.7,
+     titleFormat: 'YYYY 年 MMMM',
+     navlinks: true,
+     header: {
+       center: 'title',
+       left: '',
+     },
+     showNonCurrentDates: false,
+   });
+ });
+</script>
+{% endblock %}
+{% endblock %}

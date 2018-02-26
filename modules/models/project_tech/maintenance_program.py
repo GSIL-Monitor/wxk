@@ -28,6 +28,3 @@ class MaintenanceProgram(Model):
     remark = schema.Column(types.String(255))
     intervalType = schema.Column(types.String(255))
     source = schema.Column(types.String(255))
-
-    createTime = schema.Column(types.DateTime)
-    updateTime = schema.Column(types.DateTime)

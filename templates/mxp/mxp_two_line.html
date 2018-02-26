@@ -1,0 +1,55 @@
+{% import 'admin/lib.html' as lib with context %}
+
+{% macro render_form_with_twoLine(form, cancel_url, extra=None, form_opts=None, action=None, is_modal=False) -%}
+    {% call lib.form_tag(action=action) %}
+        {{ render_form_fields_with_twoLine(form, form_opts=form_opts) }}
+        {{ lib.render_form_buttons(cancel_url, extra, is_modal) }}
+    {% endcall %}
+{% endmacro %}
+
+{% macro render_form_fields_with_twoLine(form, form_opts=None) %}
+    {% if form.hidden_tag is defined %}
+        {{ form.hidden_tag() }}
+    {% else %}
+        {% if csrf_token %}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        {% endif %}
+        {% for f in form if f.widget.input_type == 'hidden' %}
+            {{ f }}
+        {% endfor %}
+    {% endif %}
+
+    {% if form_opts and form_opts.form_rules %}
+        {% for r in form_opts.form_rules %}
+            {{ r(form, form_opts=form_opts) }}
+        {% endfor %}
+    {% else %}
+        {% for f in form if f.widget.input_type != 'hidden' %}
+            {% if form_opts %}
+                {% set kwargs = form_opts.widget_args.get(f.short_name, {}) %}
+            {% else %}
+                {% set kwargs = {} %}
+            {% endif %}
+            {% if loop.index < twolines %}
+                {% if loop.index%2 %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ lib.render_field(form, f, kwargs) }}
+                        </div>
+                {% else %}
+                        <div class="col-md-6">
+                            {{ lib.render_field(form, f, kwargs) }}
+                        </div>
+                    </div>
+                {% endif %}
+            {% elif loop.index == twolines %}
+                {% if not loop.index%2 %}
+                    </div>
+                {% endif %}
+                 {{ lib.render_field(form, f, kwargs) }}
+            {% else %}
+                {{ lib.render_field(form, f, kwargs) }}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
