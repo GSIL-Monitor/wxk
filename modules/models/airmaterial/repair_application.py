@@ -100,7 +100,7 @@ class RepairMaterial(Model):
     # repairedReuseDate 维修后使用时间
     repairedReuseDate = schema.Column(types.String(255))
     # totalUseTime 总使用时间
-    totalUseTime = schema.Column(types.Float)
+    totalUseTime = schema.Column(types.String(255))
     # flyTime 飞行小时
     flyTime = schema.Column(types.String(255))
     # engineTime 发动机小时

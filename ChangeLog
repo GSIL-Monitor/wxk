@@ -1,3 +1,27 @@
+2018-08-03 zhangyunhao <zzhangyunhao@hfga.com.cn>
+    *bump version v1.0.2
+    *飞行日志增行改为向下增行以及增行定位
+    *修复会议纪要不能下载问题
+
+2018-06-05 zhangyunhao <zzhangyunhao@hfga.com.cn>
+    *bump version v1.0.1
+    *飞行日志需求更改
+    *飞行日志界面单双行不同颜色显示功能添加
+    *飞行日志发动机时间计算方法进行修改
+
+2018-04-10 zhangyunhao <zzhangyunhao@hfga.com.cn>
+    *bump version v0.2.19
+    *根据产品需求，修改版权时间间隔
+
+2018-03-04 zhangyunhao <zzhangyunhao@hfga.com.cn>
+    *bump version v0.2.18
+    *根据产品需求，将送修申请的总时间字段由原来的浮点型改为字符型，并且不对输入字符验证
+
+2018-03-04 zhangyunhao <zzhangyunhao@hfga.com.cn>
+    *bump version v0.2.17
+    *拆机单下次检查日期，不做建单日期默认，改为默认空值
+    *送修申请单修理后使用时间，数据类型由数字类型改为字符串，并不对输入值进行相关验证
+
 2018-02-8 zhangyunhao <zzhangyunhao@hfga.com.cn>
     *bump version v0.2.16
     *修改飞行日志必填项加验证的bug4242

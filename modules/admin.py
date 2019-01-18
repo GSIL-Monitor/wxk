@@ -9,6 +9,8 @@ from flask_admin import helpers as admin_helpers
 from flask_pymongo import PyMongo
 from flask_principal import identity_loaded
 
+import datetime
+
 from .models import init_model, init_db
 from .views import IndexView
 from .views.quality import ReservedFaultView
@@ -43,6 +45,7 @@ from .views.warning_configuration.stock_warning import StockWaringConfigurationV
 from .views.warning_configuration.expire_warning import ExpireWaringConfigurationView
 from .perms import _on_identity_loaded
 from .views.admin import UserAdminView, RoleAdminView
+from .views.unsubmit_flight_log import flight_log_notice
 
 from . import __version__
 
@@ -85,6 +88,11 @@ def init_app(app):
                     admin_view=admin_obj.index_view,
                     h=admin_helpers,
                     get_url=url_for)
+
+    @sec.login_context_processor
+    def security_login_processor():
+        year = datetime.datetime.now().year
+        return dict(copy_right=app.config['COPYRIGHT_STR'].format(year))
 
     # 需要处理一些额外的与操作相关的权限设置
     identity_loaded.connect_via(app)(_on_identity_loaded)
@@ -160,6 +168,7 @@ def init_app(app):
     custom_category_style(admin_obj, AIRMATERIAL_MANAGEMENT, 'fa', 'fa-cog')
 
     retrieve_unread_notifies(app)
+    flight_log_notice(app)
 
     return db
 

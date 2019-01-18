@@ -1,91 +1,116 @@
 {% extends 'flightlog/list.html' %}
-
 {% block head %}
     {{ super() }}
     <link href="{{ url_for('static', filename='css/inline-table.css') }}" rel="stylesheet">
 {% endblock %}
-
 {% block menu_title %}
-<i class="icon-pencil"></i>
-<span class="caption-subject font-green-sharp bold">记录 {{ date_str }} 飞行日志</span>
-<span class="caption-helper">管理日志记录</span>
+    <i class="icon-pencil"></i>
+    <span class="caption-subject font-green-sharp bold">记录 {{ date_str }} 飞行日志</span>
+    <span class="caption-helper">管理日志记录</span>
 {% endblock %}
 
 {% block menu_actions %}
 <div class="actions btn-set">
-  {% if not is_readonly %}
-    {% if can_create %}
-    <button class="btn green-meadow btn-circle disabled" id="flightlog_save"><i class="fa fa-check"></i> 暂存</button>
+    {% if not is_readonly %}
+        {% if can_create %}
+            <button class="btn green-meadow btn-circle disabled" id="flightlog_save">
+            <i class="fa fa-check"></i> 暂存</button>
+        {% endif %}
+        {% if can_commit %}
+            <button class="btn blue-madison btn-circle" id="flightlog_commit">
+            <i class="fa fa-check-circle"></i> 提交 &amp; 计算</button>
+        {% endif %}
     {% endif %}
-    {% if can_commit %}
-    <button class="btn blue-madison btn-circle" id="flightlog_commit"><i class="fa fa-check-circle"></i> 提交 &amp; 计算</button>
-    {% endif %}
-  {% endif %}
-  <a class="btn btn-default btn-circle" href="{{ get_url('.index_view') }}"><i class="fa fa-reply"></i> 返回</a>
+    <a class="btn btn-default btn-circle" href="{{ get_url('.index_view') }}">
+    <i class="fa fa-reply"></i> 返回</a>
 </div>
 {% endblock %}
 
 {% block content %}
 <div class="table-toolbar">
-  <div class="row">
-    <div class="col-md-6">
+    <div class="row">
+        <div class="col-md-6">
+        </div>
+        <div class="col-md-6">
+            <div class="btn-group pull-right">
+                {% if not is_readonly %}
+                    {% if can_create %}
+                        <button id="flightlog_table_new" class="btn blue">
+                        <i class="fa fa-plus"></i> 新增</button>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
     </div>
-    <div class="col-md-6">
-      <div class="btn-group pull-right">
-        {% if not is_readonly %}
-          {% if can_create %}
-          <button id="flightlog_table_new" class="btn blue"><i class="fa fa-plus"></i> 新增</button>
-          {% endif %}
-        {% endif %}
-      </div>
-    </div>
-  </div>
 </div>
-
 <div id="flightlog_table"></div>
 {% endblock %}
-
 {% block body_bottom %}
-<div class="well margin-top-10 no-margin no-border" id="status_info" {% if creator %}style="display: block;"{% else %}style="display: none;"{% endif %}>
-  <div class="row">
-		<div class="col-md-3 col-sm-3 col-xs-6 text-stat" id="creator" {%if creator %}style="display: block;"{% else %}style="display: none;"{% endif %}>
-			<span class="label label-success">
-        记录人: </span>
-			<h3>{{ creator }}</h3>
-		</div>
-		<div class="col-md-3 col-sm-3 col-xs-6 text-stat" id="createTime" {%if createTime %}style="display: block;"{% else %}style="display: none;"{% endif %}>
-			<span class="label label-info">
-				记录时间: </span>
-			<h3>{{ createTime }}</h3>
-		</div>
-		<div class="col-md-3 col-sm-3 col-xs-6 text-stat" id="commiter" {%if commiter %}style="display: block;"{% else %}style="display: none;"{% endif %}>
-			<span class="label label-danger">
-				提交人: </span>
-			<h3>{{ commiter }}</h3>
-		</div>
-		<div class="col-md-3 col-sm-3 col-xs-6 text-stat" id="commitTime" {%if commitTime %}style="display: block;"{% else %}style="display: none;"{% endif %}>
-			<span class="label label-warning">
-				提交时间: </span>
-			<h3>{{ commitTime }}</h3>
-		</div>
-	</div>
+<div class="well margin-top-10 no-margin no-border" id="status_info"
+    {% if creator %}
+        style="display: block;"
+    {% else %}
+        style="display: none;"
+    {% endif %}>
+    <div id="totall_engine"></div>
+    <div class="row">
+        <div class="col-md-3 col-sm-3 col-xs-6 text-stat" id="creator"
+            {%if creator %}
+                style="display: block;"
+            {% else %}
+                style="display: none;"
+            {% endif %}>
+            <span class="label label-success">
+                记录人: </span>
+            <h3>{{ creator }}</h3>
+        </div>
+        <div class="col-md-3 col-sm-3 col-xs-6 text-stat" id="createTime"
+            {%if createTime %}
+                style="display: block;"
+            {% else %}
+                style="display: none;"
+            {% endif %}>
+            <span class="label label-info">
+                记录时间: </span>
+            <h3>{{ createTime }}</h3>
+        </div>
+        <div class="col-md-3 col-sm-3 col-xs-6 text-stat" id="commiter"
+            {%if commiter %}
+                style="display: block;"
+            {% else %}
+                style="display: none;"
+            {% endif %}>
+            <span class="label label-danger">
+                提交人: </span>
+            <h3>{{ commiter }}</h3>
+        </div>
+        <div class="col-md-3 col-sm-3 col-xs-6 text-stat" id="commitTime"
+            {%if commitTime %}
+                style="display: block;"
+            {% else %}
+                style="display: none;"
+            {% endif %}>
+            <span class="label label-warning">
+                提交时间: </span>
+            <h3>{{ commitTime }}</h3>
+        </div>
+    </div>
 </div>
 {% endblock %}
-
 {% block exact_tail %}
 <script>
-  $(function() {
-  flightlogTable.init({
-     flightDay: '{{ date_str }}',
-     saveUrl: '{{ save_url }}',
-     commitUrl: '{{ commit_url }}',
-     datas: {{ datas|tojson }},
-     headers: {{ headers|tojson }},
-     columns: {{ columns|tojson }},
-     timeColumns: {{ time_columns|tojson }},
-     calcIndex: {{ calc_index|tojson }},
-     contextMenu: {{ context_menu|tojson }},
-   });
-  });
+    $(function () {
+        flightlogTable.init({
+            flightDay: '{{ date_str }}',
+            saveUrl: '{{ save_url }}',
+            commitUrl: '{{ commit_url }}',
+            datas: {{ datas | tojson }},
+            headers: {{ headers | tojson }},
+            columns: {{ columns | tojson }},
+            timeColumns: {{ time_columns | tojson }},
+            calcIndex: {{ calc_index | tojson }},
+            contextMenu: {{ context_menu | tojson }},
+        });
+    });
 </script>
 {% endblock %}

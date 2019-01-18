@@ -4,9 +4,13 @@ from __future__ import unicode_literals
 
 from flask import abort, request
 from flask_admin import expose
-from flask_admin.contrib.sqla.filters import (FilterLike, FilterEqual, FilterNotLike,
-                                              DateNotBetweenFilter, DateBetweenFilter,
-                                              DateEqualFilter, DateGreaterFilter, DateSmallerFilter)
+from flask_admin.contrib.sqla.filters import (FilterLike, FilterEqual,
+                                              FilterNotLike,
+                                              DateNotBetweenFilter,
+                                              DateBetweenFilter,
+                                              DateEqualFilter,
+                                              DateGreaterFilter,
+                                              DateSmallerFilter)
 from flask_weasyprint import HTML, render_pdf
 
 from modules.models.flightlog.flightlog import FlightLog
@@ -45,7 +49,7 @@ class FlightlogStatBaseView(CustomView):
     def get_query(self):
         # 不要使用父类的方法，因为可能涉及流程，而此处无需流程可能的逻辑
         # 仅能查询已经完成的
-        return FlightLog.query.filter(FlightLog.status==Finished)
+        return FlightLog.query.filter(FlightLog.status == Finished)
 
     def extra_ctx_datas(self):
         raise NotImplementedError()
@@ -68,16 +72,19 @@ class FlightlogStatBaseView(CustomView):
         if sort_column is not None:
             sort_column = sort_column[0]
 
-        page_size = view_args.page_size or self.page_size
+        # TODO：数据很多的时候怎么办
+        page_size = view_args.page_size
 
-        count, data = self.get_list(view_args.page, sort_column, view_args.sort_desc,
-                                    view_args.search, view_args.filters, page_size=page_size)
+        count, data = self.get_list(view_args.page, sort_column,
+                                    view_args.sort_desc, view_args.search,
+                                    view_args.filters, page_size=page_size)
 
         if with_404 and not view_args.filters:
             return abort(404)
 
         converted_data = []
         active_data = []
+        engineTimeExtra = []
         result = False
         # 需要提供过滤参数才会考虑
         if view_args.filters and data is not None:
@@ -87,12 +94,13 @@ class FlightlogStatBaseView(CustomView):
             totalLanding = []
             yaopin = []
 
-
             for i in data:
                 if i.medicinePrescription:
-                    yaopin.append((dict(name=i.medicinePrescription,num=i.workAcres)))
+                    yaopin.append(
+                        (dict(name=i.medicinePrescription, num=i.workAcres)))
                 totalFlightTime.append(i.flightTime)
                 totalEngineTime.append(i.engineTime)
+                engineTimeExtra.append(i.EngineTimeExtra)
                 totalLanding.append(i.landings)
                 converted_data.append(i.to_json())
             respData = []
@@ -114,19 +122,23 @@ class FlightlogStatBaseView(CustomView):
                         # 配方id
                         FormulaId = FormulaData[0].id
                         # 农药信息
-                        SubFormulaData = SubFormula.query.filter_by(formula_id=FormulaId).all()
+                        SubFormulaData = SubFormula.query.filter_by(
+                            formula_id=FormulaId).all()
                         if SubFormulaData is not None:
                             for sub in range(len(SubFormulaData)):
                                 if SubFormulaData[sub].weight is not None:
-                                    weight = float(SubFormulaData[sub].weight) * num
+                                    weight = float(
+                                        SubFormulaData[sub].weight) * num
                                 else:
                                     weight = ''
                                 SubFormulaid = SubFormulaData[sub].pesticide_id
                                 if SubFormulaid:
-                                    PesticideData = Pesticide.query.filter_by(id=SubFormulaid).all()
+                                    PesticideData = Pesticide.query.filter_by(
+                                        id=SubFormulaid).all()
                                     if PesticideData:
                                         PesticideName = PesticideData[0].name
-                                        PesticideDict = dict(name=PesticideName, weight=weight)
+                                        PesticideDict = dict(
+                                            name=PesticideName, weight=weight)
                                         respData.append(PesticideDict)
 
                 response = {}
@@ -137,16 +149,17 @@ class FlightlogStatBaseView(CustomView):
                     response[x['name']] = x['weight']
 
             totalFlightTime = self.calTotalTimeWithFormat(totalFlightTime)
+            totalEngineTime.extend(engineTimeExtra)
             totalEngineTime = self.calTotalTimeWithFormat(totalEngineTime)
             totalLanding = self.calcLandingsWithFormat(totalLanding)
 
-            for index,val in enumerate(view_args.filters):
+            for index, val in enumerate(view_args.filters):
                 listData = list(val)
 
                 for num in listData:
                     if num == 7:
                         listData[0] = '小于'
-                    elif num  in [3, 10]:
+                    elif num in [3, 10]:
                         listData[0] = '等于'
                     elif num == 6:
                         listData[0] = '大于'
@@ -175,12 +188,10 @@ class FlightlogStatBaseView(CustomView):
         extra_ctx_datas.update({
             'url_args': url_args,
         })
-
         if result and tag:
             if tag == 'stat':
                 return self.render(
                     template_name,
-
                     data=converted_data,
                     # 与过滤相关的内容
                     totalFlightTime=totalFlightTime,
@@ -191,7 +202,6 @@ class FlightlogStatBaseView(CustomView):
                     active_filters=view_args.filters,
                     active_data=active_data,
                     filter_args=self._get_filters(view_args.filters),
-
                     **extra_ctx_datas
                 )
             elif tag == 'formula':
@@ -199,7 +209,6 @@ class FlightlogStatBaseView(CustomView):
                     response = ''
                 return self.render(
                     template_name,
-
                     data=converted_data,
                     response=response,
                     # 与过滤相关的内容
@@ -211,13 +220,14 @@ class FlightlogStatBaseView(CustomView):
                     active_filters=view_args.filters,
                     active_data=active_data,
                     filter_args=self._get_filters(view_args.filters),
-
                     **extra_ctx_datas
                 )
         else:
+            extra_ctx_datas.update({
+                'engineTimeExtras': engineTimeExtra,
+            })
             return self.render(
                 template_name,
-
                 data=converted_data,
                 # 与过滤相关的内容
                 filters=self._filters,
@@ -225,16 +235,15 @@ class FlightlogStatBaseView(CustomView):
                 active_filters=view_args.filters,
                 active_data=active_data,
                 filter_args=self._get_filters(view_args.filters),
-
                 **extra_ctx_datas
             )
 
     def calTotalTimeWithFormat(self, datas):
         # 每个数据应该都是HH:mm的格式
-        total = 0;
-        for index,value in enumerate(datas):
+        total = 0
+        for index, value in enumerate(datas):
             if datas[index] is None:
-                continue;
+                continue
             parts = datas[index].split(":")
             total = total + (float(parts[0]) * 60) + float(parts[1])
 
@@ -246,14 +255,15 @@ class FlightlogStatBaseView(CustomView):
 
     def calcLandingsWithFormat(self, datas):
         # 每个数据应该都是HH:mm的格式
-        total = 0;
-        for index,value in enumerate(datas):
+        total = 0
+        for index, value in enumerate(datas):
             if datas[index] is None:
-                continue;
+                continue
             total = total + int(datas[index])
         return total
 
     @expose('/pdf/')
     def pdf_view(self):
-        return render_pdf(HTML(string=self._view_handler(self.pdf_template, True)),
+        return render_pdf(
+            HTML(string=self._view_handler(self.pdf_template, True)),
             stylesheets=[self.pdf_css])

@@ -28,19 +28,10 @@
       {{ render_remember_field(login_user_form.remember) }}
       {{ login_user_form.submit(class_="btn blue pull-right", value="登录") }}
     </div>
-
-    <!-- <div class="forget-password">
-			<h4>忘记密码 ?</h4>
-			<p>
-				 无需担心, 点击 <a href="javascript:;" id="forget-password">
-				这里 </a>
-				轻松重置。
-			</p>
-		</div> -->
   </form>
 </div>
 <div class="copyright">
-	 2016 - 2017 © 海丰通航科技有限公司
+    {{ copy_right }}
 </div>
 {% endblock %}
 

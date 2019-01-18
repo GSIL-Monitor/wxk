@@ -26,7 +26,8 @@ class RoutineWorkRelateDocField(RelateDocField):
         self.data = value
 
     def process_formdata(self, valuelist):
-        valuelist = json.dumps(valuelist)
+        if valuelist:
+            valuelist = json.dumps(valuelist)
         self.data = valuelist
 
     def process(self, formdata, data=unset_value):

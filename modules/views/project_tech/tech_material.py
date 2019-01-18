@@ -47,7 +47,7 @@ class _TechMaterialView(CustomView):
     form_overrides = {
         'fileResourceType': partial(RefreshFileTypeSelectField),
         'relatePlanType': partial(SelectField, choices=[
-            ('5B(D)机型', '5B(D)机型')]),
+            ('运5B（D）', '运5B（D）')]),
         'content': partial(TextAreaField, render_kw={
             'rows': 3, 'style': 'resize:none;'}),
         'fileResourceUrl': partial(TechMaterialMultiFileuploadField),

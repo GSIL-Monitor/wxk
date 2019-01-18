@@ -32,13 +32,6 @@ function customSettings(hot) {
                 }
             }
         },
-        beforeOnCellMouseDown: function (event, coords, TD) {
-            var column = coords.col;
-            var row = coords.row;
-            if (column === 1) {
-                hotRemoveExistPn(hot, row, column);
-            }
-        },
 
         beforeRenderer: function (TD, row, col, prop, value, cellProperties) {
             if (col === 4) {

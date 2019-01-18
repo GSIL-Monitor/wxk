@@ -82,7 +82,7 @@ class CustomView(Mixin, SQLModelView):
     # 顶部搜索控件是否显示
     top_search_form = False
     # 机型默认值
-    plane_type = 'Y5D(B)'
+    plane_type = 'Y5B(D)'
 
     # 用于判断是否需要保存并添加另一个和保存并继续编辑按钮
     can_extra = True

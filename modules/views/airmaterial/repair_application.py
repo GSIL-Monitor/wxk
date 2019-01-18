@@ -50,7 +50,7 @@ class _RepairApplicationView(ApproveFlowUploadFileView,
     column_details_list = [
         'number', 'applicationDate', 'repairCompany',
         'contactPerson', 'telephone', 'fax', 'mailbox',
-        'budget', 'remark', 'contractFile', 'accessory', 
+        'budget', 'remark', 'contractFile', 'accessory',
     ]
 
     extra_js = [
@@ -186,10 +186,6 @@ class _RepairApplicationView(ApproveFlowUploadFileView,
         table_columns[11]['dateFormat'] = 'YYYY-MM-DD'
         table_columns[12]['type'] = 'date'
         table_columns[12]['dateFormat'] = 'YYYY-MM-DD'
-        table_columns[13]['type'] = 'numeric'
-        table_columns[13]['format'] = '0.00'
-        table_columns[14]['type'] = 'numeric'
-        table_columns[14]['format'] = '0.00'
         table_columns[15]['validator'] = 'hhmm'
         table_columns[16]['validator'] = 'hhmm'
         table_columns[17]['type'] = 'numeric'

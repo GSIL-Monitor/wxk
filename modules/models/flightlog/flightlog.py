@@ -5,8 +5,9 @@ from __future__ import unicode_literals
 from sqlalchemy import schema, types
 from sqlalchemy.sql import exists
 import date_converter
+import datetime
 
-from modules.flows.states import InitialState, Edited, Finished
+from modules.flows.states import InitialState
 from util.helper import convert_hh_mm_to_float
 
 from ..base import Model
@@ -49,6 +50,7 @@ class FlightLog(Model, AuditModel):
     weight = schema.Column(types.String(255))
     workArea = schema.Column(types.String(255))
     workAcres = schema.Column(types.Float)
+    EngineTimeExtra = schema.Column(types.String(255))
 
     # 直接定义要求的status属性
     status = schema.Column(types.String(255))
@@ -60,18 +62,21 @@ class FlightLog(Model, AuditModel):
     @classmethod
     def has_related_status_by_day(cls, day_format, status=InitialState):
         "获取指定日期是否存在对应状态的数据"
-
-        e = exists().where(cls.flightDate==date_converter.string_to_date(day_format, '%Y-%m-%d')).where(cls.status==status)
+        the_date = date_converter.string_to_date(day_format, '%Y-%m-%d')
+        e = exists().where(cls.flightDate == the_date).where(
+            cls.status == status)
         return cls.query.filter(e).count() != 0
 
     @classmethod
     def get_all_data_by_day(cls, day_format):
-        return cls.query.filter(cls.flightDate==date_converter.string_to_date(day_format, '%Y-%m-%d')).all()
+        the_date = date_converter.string_to_date(day_format, '%Y-%m-%d')
+        return cls.query.filter(cls.flightDate == the_date).all()
 
     def to_json(self):
 
         def _format_time(time_field):
-            return time_field.strftime('%H:%M:%S') if time_field else '00:00:00'
+            default = '00:00:00'
+            return time_field.strftime('%H:%M:%S') if time_field else default
 
         return {
             'flightlogId': self.flightlogId,
@@ -104,13 +109,28 @@ class FlightLog(Model, AuditModel):
         }
 
     def to_api_data(self):
+
+        def get_departure_time():
+
+            departure_list = [self.flightDate.strftime('%Y-%m-%d'),
+                              self.departureTime.strftime('%H:%M:%S')]
+            return date_converter.string_to_timestamp(' '.join(departure_list),
+                                                      '%Y-%m-%d %H:%M:%S')
+
+        def get_landing_time():
+            loading_list = [self.flightDate.strftime('%Y-%m-%d'),
+                            self.landingTime.strftime('%H:%M:%S')]
+            return date_converter.string_to_timestamp(' '.join(loading_list),
+                                                      '%Y-%m-%d %H:%M:%S')
+
         # 将该数据转换为API所要求的格式
         if not self.flightlogId:
             raise ValueError('飞行日志编号不允许为空')
         if not self.aircraftId:
             raise ValueError('飞行日志的关联飞行器编号不能为空')
         if not self.departureTime or not self.landingTime:
-            raise ValueError('起飞时间或降落时间有误')
+            if not (self.departureTime == datetime.time(0, 0)):
+                raise ValueError('起飞时间或降落时间有误')
         if not self.flightTime:
             raise ValueError('飞行小时设置有误')
         if not self.landings:
@@ -118,12 +138,9 @@ class FlightLog(Model, AuditModel):
         if not self.engineTime:
             raise ValueError('发动机小时设置有误')
 
-        departureTime = date_converter.string_to_timestamp(
-            ' '.join([self.flightDate.strftime('%Y-%m-%d'), self.departureTime.strftime('%H:%M:%S')]),
-            '%Y-%m-%d %H:%M:%S')
-        landingTime = date_converter.string_to_timestamp(
-            ' '.join([self.flightDate.strftime('%Y-%m-%d'), self.landingTime.strftime('%H:%M:%S')]),
-            '%Y-%m-%d %H:%M:%S')
+        departureTime = get_departure_time()
+        landingTime = get_landing_time()
+
         if landingTime <= departureTime:
             raise ValueError("降落时间至少应该大于起飞时间")
 
@@ -136,6 +153,9 @@ class FlightLog(Model, AuditModel):
         if not et:
             raise ValueError('发动机时间为 0 小时的日志有什么意义？')
 
+        aet = convert_hh_mm_to_float(self.EngineTimeExtra) \
+            if self.EngineTimeExtra else 0
+
         return {
             'id': self.flightlogId,
             'aircraftId': self.aircraftId,
@@ -145,7 +165,7 @@ class FlightLog(Model, AuditModel):
             'landings': int(self.landings),
             'remark': self.remark or '',
             'flightTime': fl,
-            'engineTime': et,
+            'engineTime': et + aet,
             # TODO: 写死
             'aircraftType': 'y5b',
             # 下面的内容非必须，但是API端要求传输

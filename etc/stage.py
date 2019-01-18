@@ -18,6 +18,8 @@ if 'SERVER_NAME' in os.environ:
 SITE_TITLE = '徐州农用航空站通航信息化系统'
 SITE_URL = '/'
 
+COPYRIGHT_STR = '2016 - {} 技术开发: 海丰通航科技有限公司'
+
 #: session
 SESSION_COOKIE_NAME = '_s'
 # SESSION_COOKIE_SECURE = True
@@ -77,6 +79,8 @@ WXK_GROUP = os.environ['WXK_GROUP']
 REDIS_HOST = 'redis'
 REDIS_PORT = 6379
 REDIS_USER_DBID = 15                # 目前该实现需要一个特殊的DB来存放与用户缓存数据相关的内容
+REDIS_PASSWORD = os.environ[
+    'REDIS_PASSWORD'] if 'REDIS_PASSWORD' in os.environ else '%016q1w2e3root'
 
 HOMEPAGE_MAX_COUNT = 8          # 首页各项显示的最多条数
 

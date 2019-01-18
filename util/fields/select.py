@@ -194,11 +194,12 @@ class choiceUserSelectField(SelectMultipleField):
             self.data = ','.join(self.data)
         setattr(obj, name, self.data)
 
+
 class choiceRealNameSelectField(SelectMultipleField):
     widget = Select2Widget(multiple=True)
 
     def __init__(self, *args, **kwargs):
-        users = User.query.all()
+        users = User.query.filter(User.realName.isnot(None)).all()
         super(choiceRealNameSelectField, self).__init__(
             choices=[(user.realName, user.realName) for user in users],
             *args, **kwargs)

@@ -111,9 +111,9 @@ def get_date_after_day(strf, nday):
                 strf) + datetime.timedelta(days=int(nday))
             return value.strftime("%Y-%m-%d")
         else:
-            return datetime.datetime.now().strftime("%Y-%m-%d")
+            return None
     except:
-        return datetime.datetime.now().strftime("%Y-%m-%d")
+        return None
 
 
 def get_plane_infos_by_pn(pn, plane_num, category, trace=True):
@@ -201,7 +201,10 @@ def get_aircraft_afterrepaired_flytime_enginetime(
         """
         display_hour = '00:00'
         coll = current_app.mongodb
-        object_id = coll.time_control_unit_y5b.find_one({'id': mxpId})['_id']
+        object_data = coll.time_control_unit_y5b.find_one({'id': mxpId})
+        if object_data is None:
+            return display_hour
+        object_id = object_data['_id']
         dbref = DBRef('time_control_unit_y5b', object_id)
         des = coll.aircraft_information.find_one(
             {'id': aircraftId, 'boundedItems.refId': dbref},

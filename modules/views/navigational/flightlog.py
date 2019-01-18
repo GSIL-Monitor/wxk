@@ -4,10 +4,11 @@ from __future__ import unicode_literals
 from functools import partial
 from datetime import datetime, date
 from copy import deepcopy
-
+import re
 import date_converter
 import collections
-from flask import request, jsonify, url_for, abort
+
+from flask import request, abort
 from flask_security import current_user
 from flask_admin import expose
 from wtforms_json import from_json
@@ -30,6 +31,7 @@ from modules.perms import ActionNeedPermission
 
 _aircraftName = '飞行器编号'
 _flyPropertyName = '飞行性质'
+_inertial_mission = '惯导任务'
 _takeOffAirportName = '起飞机场'
 _landAirportName = '降落机场'
 _formulaName = '药品配方'
@@ -47,7 +49,7 @@ headers = [
     # '开车时间',
     '滑出时间', '起飞时间', '降落时间',
     # '关车时间',
-    '停止时间', '飞行时间', '发动机时间', _captain1, _captain2, _captain3, '机组成员', '其他', 
+    '停止时间', '飞行时间', '发动机时间', _captain1, _captain2, _captain3, '机组成员', '其他',
     '起落次数', _formulaName, '加药量(kg)', '作业亩数', '备注',
 ]
 
@@ -70,20 +72,28 @@ columns = [
     # 飞行日期，不再显示给用户，原因见上
     # dict(data='flightDate', readOnly=True),
     # 开车时间
-    # dict(data='poweronTime', type='time', timeFormat='HH:mm:ss', correctFormat=True),
+    # dict(data='poweronTime', type='time', timeFormat='HH:mm:ss',
+    #      correctFormat=True),
     # 滑出时间
-    dict(data='skidoffTime', type='time', timeFormat='HH:mm:ss', correctFormat=True),
+    dict(data='skidoffTime', type='time', timeFormat='HH:mm:ss',
+         correctFormat=True),
     # 起飞时间
-    dict(data='departureTime', type='time', timeFormat='HH:mm:ss', correctFormat=True),
+    dict(data='departureTime', type='time', timeFormat='HH:mm:ss',
+         correctFormat=True),
     # 降落时间
-    dict(data='landingTime', type='time', timeFormat='HH:mm:ss', correctFormat=True),
+    dict(data='landingTime', type='time', timeFormat='HH:mm:ss',
+         correctFormat=True),
     # 关车时间
-    # dict(data='powerdownTime', type='time', timeFormat='HH:mm:ss', correctFormat=True),
+    # dict(data='powerdownTime', type='time', timeFormat='HH:mm:ss',
+    #      correctFormat=True),
     # 停止时间
-    dict(data='stopTime', type='time', timeFormat='HH:mm:ss', correctFormat=True),
-    dict(data='flightTime', type='time', timeFormat='HH:mm', correctFormat=True, readOnly=True),
-    dict(data='engineTime', type='time', timeFormat='HH:mm', correctFormat=True, readOnly=True),
-     # 机长1
+    dict(data='stopTime', type='time', timeFormat='HH:mm:ss',
+         correctFormat=True),
+    dict(data='flightTime', type='time', timeFormat='HH:mm',
+         correctFormat=True, readOnly=True),
+    dict(data='engineTime', type='time', timeFormat='HH:mm',
+         correctFormat=True, readOnly=True),
+    # 机长1
     dict(data='captain', editor='select', selectOptions=[]),
     # 机长2
     dict(data='copilot', editor='select', selectOptions=[]),
@@ -95,8 +105,9 @@ columns = [
     dict(data='passengers'),
     dict(data='landings', type='numeric', format='0', language='zh-CN'),
     dict(data='medicinePrescription', editor='select', selectOptions=[]),
-    dict(data='weight', editor='select', selectOptions=['', '800', '900', '1000']),
-    
+    dict(data='weight', editor='select',
+         selectOptions=['', '800', '900', '1000']),
+
     dict(data='workAcres', type='numeric', format='0.00', language='zh-CN'),
     dict(data='remark'),
 ]
@@ -157,24 +168,26 @@ class _FlightLogView(CustomView):
     @expose('/commit/', methods=['POST'])
     @specified_day
     def commit_log(self, date_str):
+
+        def prepare_commit(data):
+            self._custom_action(data, dict(), action='finish',
+                                direct_commit=False)
+            self.session.add(data)
+            return data.to_api_data()
+
         try:
             exists = FlightLog.get_all_data_by_day(date_str)
-            commit_datas = []
-            for item in exists:
-                if item.status == Finished:
-                    return (400, '当天的日志已经提交了，你可能提交的是旧数据？', {})
-            flightlogId_list = []
+            status = [data.status for data in exists]
+            if Finished in status:
+                return (400, '当天的日志已经提交了，你可能提交的是旧数据？', {})
+
             # 这个地方进行判断数据是否有相同的flightlogId 如果有，则报错
-            for item in exists:
-                flightlogId_list.append(item.flightlogId)
-            flightlogId_count = collections.Counter(flightlogId_list)
-            if flightlogId_count.values().count(1) != len(flightlogId_count.values()):
+            log_ids = [data.flightlogId for data in exists]
+            logId_count = collections.Counter(log_ids)
+            if logId_count.values().count(1) != len(logId_count.values()):
                 return (400, '当天的日志的编号有相同的，请从新填写，再提交', {})
 
-            for data in exists:
-                commit_datas.append(data.to_api_data())
-                self._custom_action(data, dict(), action='finish', direct_commit=False)
-                self.session.add(data)
+            commit_datas = [prepare_commit(data) for data in exists]
 
             # 执行远程REQUEST请求
             # TODO: 写死的机型
@@ -190,13 +203,13 @@ class _FlightLogView(CustomView):
             self.session.rollback()
             return (400, unicode(ex), {})
 
-        return (200, 'ok', {'username': current_user.realName, 'timestamp': date.today().strftime('%Y-%m-%d')})
+        return (200, 'ok', {'username': current_user.realName,
+                            'timestamp': date.today().strftime('%Y-%m-%d')})
 
     @expose('/save/', methods=['POST'])
     @specified_day
     def save_log(self, date_str):
         try:
-            
             all_data = request.get_json()
             if all_data is None or 'datas' not in all_data:
                 return (400, '请求的数据没有使用正确的格式。', {})
@@ -212,34 +225,51 @@ class _FlightLogView(CustomView):
                     return (400, '当天的日志已经提交了，你可能提交的是旧数据？', {})
                 self.session.delete(item)
 
+            mission_data = self.saved_fly_type_check(all_data)
             for index, data in enumerate(all_data):
                 # WUJG: 对数据的格式进行转换，以便允许生成下面的实例
                 computed_data = {}
-                if data[0] is None or data[0] == '':
-                    return (400, '请选择任务类型', {})
-                if data[6] is None or data[6] == '':
-                    return (400, '请输入正确的滑出时间', {})
-                if data[7] is None or data[7] == '':
-                    return (400, '请输入正确的起飞时间', {})
-                if data[8] is None or data[8] == '':
-                    return (400, '请输入正确的降落时间', {})
-                if data[9] is None or data[9] == '':
-                    return (400, '请输入正确的停止时间', {})
+                # TODO: 徐州的机务应为停电问题导致暂存不进行必填验证
+                # 但暂存验证应该是能更加确保数据准确性
+                # 到底如何进行验证值得思考
+                # if data[0] is None or data[0] == '':
+                #     return (400, '请选择任务类型', {})
+                # if data[6] is None or data[6] == '':
+                #     return (400, '请输入正确的滑出时间', {})
+                # if data[7] is None or data[7] == '':
+                #     return (400, '请输入正确的起飞时间', {})
+                # if data[8] is None or data[8] == '':
+                #     return (400, '请输入正确的降落时间', {})
+                # if data[9] is None or data[9] == '':
+                #     return (400, '请输入正确的停止时间', {})
                 for idx, cl_cfg in enumerate(columns):
+                    data[idx] = data[idx] if data[idx] else ''
                     computed_data[cl_cfg['data']] = data[idx]
+                    if cl_cfg['data'] == 'engineTime' and \
+                            self.time_check(data[idx]) and \
+                            self.relate_engineTimeCheck(computed_data):
+                        arn = computed_data.get('aircraftId')
+                        if arn in mission_data:
+                            if mission_data[arn]:
+                                computed_data['EngineTimeExtra'] = '00:06'
+                            else:
+                                computed_data['EngineTimeExtra'] = '00:02'
+                            mission_data.pop(arn)
 
                 form = self._create_form_class.from_json(computed_data)
                 model = self.model()
                 form.populate_obj(model)
 
-
                 # 由于日志编号在API端计算的时候必须提供，下面使用自动生成的算法
-                model.flightlogId = ''.join(['FXRZBH', date_str, '%02d' % (index+1,)])
-                model.flightDate = date_converter.string_to_date(date_str, self._timestamp_format)
+                model.flightlogId = ''.join(['FXRZBH', date_str,
+                                             '%02d' % (index + 1,)])
+                model.flightDate = date_converter.string_to_date(
+                    date_str, self._timestamp_format)
 
                 # TODO: 能做到新建的新建、更新的更新吗？
                 # WUJG: 为了简化，目前这里全部标识为新建
-                self._custom_action(model, dict(), action='create', direct_commit=False)
+                self._custom_action(model, dict(), action='create',
+                                    direct_commit=False)
 
                 self.session.add(model)
             self.session.commit()
@@ -247,13 +277,17 @@ class _FlightLogView(CustomView):
             self.session.rollback()
             return (400, ex, {})
 
-        return (200, 'ok', {'username': current_user.realName, 'timestamp': date.today().strftime('%Y-%m-%d')})
+        return (200, 'ok', {'username': current_user.realName,
+                            'timestamp': date.today().strftime('%Y-%m-%d')})
 
     @expose('/edit/')
     def create_view(self):
         # 飞行器列表编辑页面的视图处理
 
-        if not self.can_create and not self.can_edit and not self.can_view_details and not self.can_finish:
+        if not self.can_create and \
+                not self.can_edit and \
+                not self.can_view_details and \
+                not self.can_finish:
             return abort(403)
 
         timestamp = request.args.get('timestamp', None)
@@ -261,31 +295,41 @@ class _FlightLogView(CustomView):
             return abort(404)
         try:
             timestamp = float(timestamp)
-        except:
+        except ValueError:
+            return abort(404)
+        except TypeError:
             return abort(404)
 
         timestamp_obj = date_converter.timestamp_to_datetime(timestamp)
         if timestamp_obj > datetime.now():
             return abort(404)
 
-        td = date_converter.timestamp_to_string(timestamp, self._timestamp_format)
+        td = date_converter.timestamp_to_string(
+            timestamp, self._timestamp_format)
 
         exist = FlightLog.get_all_data_by_day(td)
         datas = []
         # 与状态相关的内容
         creator, create_time, commiter, commit_time = None, None, None, None
+
         # 转为可JSON序列化的内容
+        # 这段for 循环的逻辑实在是尴尬
+        # 为啥要这么做
         for item in exist:
             if creator is None:
-                creator = get_last_create_index(item, InitialState, 'createUserName')
+                creator = get_last_create_index(
+                    item, InitialState, 'createUserName')
             if create_time is None:
-                create_time = get_last_create_index(item, InitialState, 'createTime')
+                create_time = get_last_create_index(
+                    item, InitialState, 'createTime')
                 if create_time:
                     create_time = create_time.strftime('%Y-%m-%d')
             if commiter is None:
-                commiter = get_last_create_index(item, Finished, 'reviewUserName')
+                commiter = get_last_create_index(
+                    item, Finished, 'reviewUserName')
             if commit_time is None:
-                commit_time = get_last_create_index(item, Finished, 'reviewTime')
+                commit_time = get_last_create_index(
+                    item, Finished, 'reviewTime')
                 if commit_time:
                     commit_time = commit_time.strftime('%Y-%m-%d')
 
@@ -294,18 +338,27 @@ class _FlightLogView(CustomView):
         # 获取可选择的飞机
         _columns = deepcopy(columns)
         # TODO: 注意，目前强制编码为y5b的飞机
-        _columns[headers.index(_aircraftName)]['selectOptions'] = [aircraft.id for aircraft in get_allowed_aircrafts('y5b')]
-        _columns[headers.index(_flyPropertyName)]['selectOptions'] = [item.name for item in FlyNature.query.all()]
+        _columns[headers.index(_aircraftName)]['selectOptions'] = [
+            aircraft.id for aircraft in get_allowed_aircrafts('y5b')]
+        _columns[headers.index(_flyPropertyName)]['selectOptions'] = [
+            item.name for item in FlyNature.query.all()]
         allowed_airports = [item.name for item in Airport.query.all()]
-        _columns[headers.index(_takeOffAirportName)]['selectOptions'] = allowed_airports
-        _columns[headers.index(_landAirportName)]['selectOptions'] = allowed_airports
-        _columns[headers.index(_formulaName)]['selectOptions'] = [item.name for item in Formula.query.all()]
+        _columns[headers.index(_takeOffAirportName)][
+            'selectOptions'] = allowed_airports
+        _columns[headers.index(_landAirportName)][
+            'selectOptions'] = allowed_airports
+        _columns[headers.index(_formulaName)]['selectOptions'] = [
+            item.name for item in Formula.query.all()]
         # 获取允许的飞行员
-        _columns[headers.index(_captain1)]['selectOptions'] = [item.name for item in Pilot.get_all()]
-        _columns[headers.index(_captain2)]['selectOptions'] = [item.name for item in Pilot.get_all()]
-        _columns[headers.index(_captain3)]['selectOptions'] = [item.name for item in Pilot.get_all()]
+        _columns[headers.index(_captain1)]['selectOptions'] = [
+            item.name for item in Pilot.get_all()]
+        _columns[headers.index(_captain2)]['selectOptions'] = [
+            item.name for item in Pilot.get_all()]
+        _columns[headers.index(_captain3)]['selectOptions'] = [
+            item.name for item in Pilot.get_all()]
 
         is_readonly = FlightLog.has_related_status_by_day(td, Finished)
+
         contextMenu = {
             "items": {
                 "row_above": {
@@ -373,20 +426,21 @@ class _FlightLogView(CustomView):
                 'startIndex': headers.index('滑出时间'),
                 'endProp': 'stopTime',
                 'endIndex': headers.index('停止时间'),
+                'aircraftIdIndex': headers.index(_aircraftName),
+                'aircraftIdProp': 'aircraftId',
                 'flightTimeIndex': headers.index('飞行时间'),
+                'engineTimeProp': 'engineTime',
                 'engineTimeIndex': headers.index('发动机时间'),
             },
         )
-
-    @expose()
-    def index_view(self):
-        return super(_FlightLogView, self).index_view()
 
     @expose('/all-events/')
     @fullcanlendar_events
     def get_events(self, date_str, timestamp):
         # 首先查是否有完成的日志，其优先级最高
-        flightlog_title = u'编辑飞行日志' if not FlightLog.has_related_status_by_day(date_str, Finished) else u'查看飞行日志'
+        flightlog_title = u'编辑飞行日志' \
+            if not FlightLog.has_related_status_by_day(date_str, Finished) \
+            else u'查看飞行日志'
         className = 'label label-success'
         if '编辑' in flightlog_title:
             className = 'label label-primary'
@@ -403,7 +457,33 @@ class _FlightLogView(CustomView):
         if '查看' in flightlog_title and not self.can_view_details:
             return
 
-        return (self.get_url('.edit_view', timestamp=timestamp), flightlog_title, className)
+        return (self.get_url('.edit_view', timestamp=timestamp),
+                flightlog_title, className)
+
+    def saved_fly_type_check(self, data):
+        check = {}
+        for item in data:
+            fly_type, arn, engineTime = item[0], item[3], item[11]
+            if fly_type and arn and engineTime:
+                check[arn] = False
+                if not check[arn] and fly_type == _inertial_mission:
+                    check[arn] = True
+        return check
+
+    def time_check(self, time):
+
+        time_reg = r'^([0-1][0-9]|2[0-3]):[0-5][0-9]$'
+
+        if not time or not re.match(time_reg, time):
+            return False
+        return True
+
+    def relate_engineTimeCheck(self, data):
+
+        fields = ['missionType', 'aircraftId', 'engineTime']
+
+        return reduce(lambda x, y: x and y,
+                      map(lambda f: data.get(f) is not None, fields))
 
 
 FlightLogView = partial(
